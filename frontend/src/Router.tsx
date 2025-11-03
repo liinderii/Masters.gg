@@ -1,0 +1,19 @@
+import { createBrowserRouter } from "react-router-dom";
+import { Layout } from "./components/Layout";
+import { HomePage } from "./pages/Home";
+import { Login } from "./pages/Login";
+import { Register } from "./pages/Register";
+
+export const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Layout />,
+    errorElement: <div style={{ padding: 24 }}>Något gick fel.</div>,
+    children: [
+      { index: true, element: <HomePage /> }, // "/"
+      { path: "login", element: <Login /> }, // "/login"
+      { path: "register", element: <Register /> }, // "/register"
+      { path: "*", element: <div>404</div> },
+    ],
+  },
+]);
