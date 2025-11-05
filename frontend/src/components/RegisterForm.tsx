@@ -27,13 +27,12 @@ export const RegisterForm = () => {
 
     setError("");
 
-    // === Din axios-post (med dina state-värden) ===
     const response = await axios.post(
       "http://localhost:3000/register",
       {
         name: userName,
-        email: email, // <— använder ditt state "email"
-        password: password, // <— använder ditt state "password"
+        email: email,
+        password: password,
       },
       {
         withCredentials: true,
@@ -105,8 +104,17 @@ export const RegisterForm = () => {
           />
         </div>
         <div>
-          <button type="submit">Register</button>
-          <button type="button" onClick={() => navigate("/login")}>
+          <button
+            className="mt-6 w-full rounded-lg bg-violet-400 hover:bg-violet-500 text-white font-semibold py-2 transition focus:outline-none focus:ring-2 focus:ring-violet-300"
+            type="submit"
+          >
+            Register
+          </button>
+          <button
+            className="mt-6 w-full rounded-lg bg-violet-400 hover:bg-violet-500 text-white font-semibold py-2 transition focus:outline-none focus:ring-2 focus:ring-violet-300"
+            type="button"
+            onClick={() => navigate("/login")}
+          >
             Already have an account?
           </button>
         </div>

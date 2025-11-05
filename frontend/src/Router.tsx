@@ -10,10 +10,10 @@ export const router = createBrowserRouter([
     element: <Layout />,
     errorElement: <div style={{ padding: 24 }}>Något gick fel.</div>,
     children: [
-      { index: true, element: <HomePage /> }, // "/"
-      { path: "login", element: <Login /> }, // "/login"
-      { path: "register", element: <Register /> }, // "/register"
+      { index: true, element: <HomePage /> },
       { path: "*", element: <div>404</div> },
     ],
   },
+  { path: "login", element: <Login /> },
+  { path: "register", element: <Register /> },
 ]);

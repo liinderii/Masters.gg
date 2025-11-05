@@ -2,11 +2,12 @@
   "name": "backend",
   "version": "1.0.0",
   "description": "",
+  "type": "module",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-        "dev": "npx tsx watch src/index.mts",
-        "build": "tsc"
+    "dev": "npx tsx watch src/index.mts",
+    "build": "tsc"
   },
   "keywords": [],
   "author": "",
@@ -23,7 +24,10 @@
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
+    "@types/cookie-parser": "^1.4.10",
+    "@types/cors": "^2.8.19",
     "@types/express": "^5.0.5",
+    "@types/jsonwebtoken": "^9.0.10",
     "typescript": "^5.9.3"
   }
 }
