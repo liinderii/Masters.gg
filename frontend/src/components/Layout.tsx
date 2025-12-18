@@ -1,15 +1,24 @@
 import { Outlet } from "react-router-dom";
 import { Header } from "./Header";
+import { Footer } from "./Footer";
 
 export const Layout = () => {
   return (
-    <div className="h-dvh flex flex-col overflow-hidden">
-      <Header />
+    <div className="min-h-dvh flex flex-col">
+      {/* Header – sticky */}
+      <header className="sticky top-0 z-50">
+        <Header />
+      </header>
 
-      {/* All sid-scroll sker här */}
-      <div className="flex-1 min-h-0 overflow-y-auto">
+      {/* Main – tar all plats */}
+      <main className="flex-1">
         <Outlet />
-      </div>
+      </main>
+
+      {/* Footer – INTE sticky */}
+      <footer>
+        <Footer />
+      </footer>
     </div>
   );
 };

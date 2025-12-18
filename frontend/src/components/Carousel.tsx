@@ -38,8 +38,8 @@ export const MainCarousel = () => {
         ))}
       </CarouselContent>
 
-      <CarouselPrevious />
-      <CarouselNext />
+      <CarouselPrevious className="border-emerald-400 border-2" />
+      <CarouselNext className="border-emerald-400 border-2" />
     </Carousel>
   );
 };

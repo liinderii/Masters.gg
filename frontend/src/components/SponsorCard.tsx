@@ -21,7 +21,7 @@ export const SponsorCard = ({
   onClick,
 }: Props) => {
   return (
-    <Card className="overflow-hidden border">
+    <Card className="overflow-hidden rounded-xl bg-white/5 border border-white/10 ring-1 ring-emerald-400/20 hover:ring-emerald-400/35 transition">
       <button type="button" onClick={onClick} className="w-full text-left">
         <CardHeader className="pb-2">
           <CardTitle className="text-sm font-semibold pl-3 border-l-2 border-emerald-400">

@@ -6,74 +6,57 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
 } from "../components/ui/sidebar";
-
-import { sidebarButton } from "../Styles/sidebar";
+import { buttons } from "../Styles/button";
 
 export const LeftSidebar = () => {
   return (
     <>
-      <SidebarGroup className="border p-8">
-        <SidebarGroupLabel className="mb-3 pl-3 text-sm font-semibold text-black border-l-2 border-emerald-400">
+      <SidebarGroup className="p-8 bg-neutral-800 rounded-xl bg-white/5 border border-white/10 ring-1 ring-emerald-400/20 hover:ring-emerald-400/35 transition">
+        <SidebarGroupLabel className="mb-3 pl-3 text-xl font-semibold text-white border-l-2 border-emerald-400">
           Community
         </SidebarGroupLabel>
 
         <SidebarGroupContent>
           <SidebarMenu className="space-y-2">
             <SidebarMenuItem>
-              <SidebarMenuButton className={sidebarButton}>
-                Profile
-              </SidebarMenuButton>
+              <SidebarMenuButton className={buttons}>Profile</SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton className={sidebarButton}>
-                Friends
-              </SidebarMenuButton>
+              <SidebarMenuButton className={buttons}>Friends</SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton className={sidebarButton}>
-                Forums
-              </SidebarMenuButton>
+              <SidebarMenuButton className={buttons}>Forums</SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton className={sidebarButton}>
-                Clans
-              </SidebarMenuButton>
+              <SidebarMenuButton className={buttons}>Clans</SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton className={sidebarButton}>
-                Events
-              </SidebarMenuButton>
+              <SidebarMenuButton className={buttons}>Events</SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarGroupContent>
       </SidebarGroup>
 
       {/* 2) GAMING RELATED */}
-      <SidebarGroup className="border p-8 mt-6">
-        <SidebarGroupLabel
-          className="
-  mb-3 pl-3 text-sm font-semibold text-black
-  border-l-2 border-emerald-400"
-        >
+      <SidebarGroup className="p-8 mt-6 bg-neutral-800 rounded-xl bg-white/5 border border-white/10 ring-1 ring-emerald-400/20 hover:ring-emerald-400/35 transition">
+        <SidebarGroupLabel className="mb-3 pl-3 text-xl font-semibold text-white border-l-2 border-emerald-400">
           Gaming related
         </SidebarGroupLabel>
 
         <SidebarGroupContent>
           <SidebarMenu className="space-y-2">
             <SidebarMenuItem>
-              <SidebarMenuButton className={sidebarButton}>
+              <SidebarMenuButton className={buttons}>
                 Popular games
               </SidebarMenuButton>
             </SidebarMenuItem>
 
             <SidebarMenuItem>
-              <SidebarMenuButton className={sidebarButton}>
-                Genres
-              </SidebarMenuButton>
+              <SidebarMenuButton className={buttons}>Genres</SidebarMenuButton>
             </SidebarMenuItem>
 
             <SidebarMenuItem>
-              <SidebarMenuButton className={sidebarButton}>
+              <SidebarMenuButton className={buttons}>
                 Platforms
               </SidebarMenuButton>
             </SidebarMenuItem>
@@ -82,62 +65,52 @@ export const LeftSidebar = () => {
       </SidebarGroup>
 
       {/* 3) E-SPORT */}
-      <SidebarGroup className="border p-8 mt-6">
-        <SidebarGroupLabel
-          className="
-  mb-3 pl-3 text-sm font-semibold text-black
-  border-l-2 border-emerald-400"
-        >
+      <SidebarGroup className="p-8 mt-6 rounded-xl bg-white/5 border border-white/10 ring-1 ring-emerald-400/20 hover:ring-emerald-400/35 transition">
+        <SidebarGroupLabel className="mb-3 pl-3 text-xl font-semibold text-white border-l-2 border-emerald-400">
           E-sport
         </SidebarGroupLabel>
 
         <SidebarGroupContent>
           <SidebarMenu className="space-y-2">
             <SidebarMenuItem>
-              <SidebarMenuButton className={sidebarButton}>
+              <SidebarMenuButton className={buttons}>
                 Tournaments
               </SidebarMenuButton>
             </SidebarMenuItem>
 
             <SidebarMenuItem>
-              <SidebarMenuButton className={sidebarButton}>
-                Teams
-              </SidebarMenuButton>
+              <SidebarMenuButton className={buttons}>Teams</SidebarMenuButton>
             </SidebarMenuItem>
 
             <SidebarMenuItem>
-              <SidebarMenuButton className={sidebarButton}>
+              <SidebarMenuButton className={buttons}>
                 Standings
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarGroupContent>
       </SidebarGroup>
-      <SidebarGroup className="border p-8 mt-6">
-        <SidebarGroupLabel
-          className="
-  mb-3 pl-3 text-sm font-semibold text-black
-  border-l-2 border-emerald-400"
-        >
+      <SidebarGroup className="p-8 mt-6 bg-neutral-800 rounded-xl bg-white/5 border border-white/10 ring-1 ring-emerald-400/20 hover:ring-emerald-400/35 transition">
+        <SidebarGroupLabel className="mb-3 pl-3 text-xl font-semibold text-white border-l-2 border-emerald-400">
           Social
         </SidebarGroupLabel>
 
         <SidebarGroupContent>
           <SidebarMenu className="space-y-2">
             <SidebarMenuItem>
-              <SidebarMenuButton className={sidebarButton}>
+              <SidebarMenuButton className={buttons}>
                 Marketplace
               </SidebarMenuButton>
             </SidebarMenuItem>
 
             <SidebarMenuItem>
-              <SidebarMenuButton className={sidebarButton}>
+              <SidebarMenuButton className={buttons}>
                 Meme Zone
               </SidebarMenuButton>
             </SidebarMenuItem>
 
             <SidebarMenuItem>
-              <SidebarMenuButton className={sidebarButton}>
+              <SidebarMenuButton className={buttons}>
                 Off topic
               </SidebarMenuButton>
             </SidebarMenuItem>

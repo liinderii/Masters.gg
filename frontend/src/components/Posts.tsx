@@ -18,7 +18,7 @@ export const Posts = ({ post }: { post: Post }) => {
         <CardDescription>{post.caption}</CardDescription>
         <CardAction></CardAction>
       </CardHeader>
-      <CardContent>
+      <CardContent className="h-100">
         {post.text && <p>{post.text}</p>}
         {post.media?.type === "image" ? (
           <img
