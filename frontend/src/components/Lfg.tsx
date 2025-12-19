@@ -4,7 +4,7 @@ import { Card, CardContent } from "./ui/card";
 export const Lfg = () => {
   return (
     <Card
-      className="w-full h-80 flex items-center justify-center    p-8
+      className="w-full h-80 flex items-center justify-center p-8
     bg-neutral-800
     rounded-xl
     border-l-2
