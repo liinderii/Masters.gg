@@ -24,6 +24,10 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
     const userFromDb = await User.findOne({ email: theUser.email });
 
     if (userFromDb) {
+      (req as any).userId = userFromDb._id.toString();
+      (req as any).userEmail = userFromDb.email;
+      (req as any).username = userFromDb.name;
+
       return next();
     } else {
       return res.status(403).send("Faking a user are we???");

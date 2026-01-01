@@ -6,6 +6,7 @@ import { loginRouter } from "./routes/loginRoute.mjs";
 import cookieParser from "cookie-parser";
 import { auth } from "./middlewares/auth.mjs";
 import cors from "cors";
+import { postRouter } from "./routes/postRoute.mjs";
 dotenv.config();
 
 const port = process.env.PORT || 3000;
@@ -29,6 +30,8 @@ app.use("/register", registerRouter);
 app.use("/login", loginRouter);
 
 app.use(auth);
+
+app.use("/posts", postRouter);
 
 app.listen(port, async () => {
   await mongoose.connect(dbUrl);
