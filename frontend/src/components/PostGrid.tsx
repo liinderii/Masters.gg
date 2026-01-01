@@ -2,8 +2,6 @@ import { mockPosts } from "../data/mockPosts";
 import { Posts } from "./Posts";
 import { useState } from "react";
 
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
-
 export const PostGrid = () => {
   const [open, setOpen] = useState();
   return (

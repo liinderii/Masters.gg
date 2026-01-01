@@ -7,7 +7,12 @@ export const Navigation = () => {
     <>
       <div className="flex gap-10">
         <Crown />
-        <User />
+        <Link
+          to="/profile"
+          className=" rounded-full hover:bg-white/10 transition cursor-pointer"
+        >
+          <User />
+        </Link>
         <Link to="/">Home</Link>
         <Link to="/login">Login</Link>
         <Link to="/register">Register</Link>

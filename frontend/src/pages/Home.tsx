@@ -48,13 +48,7 @@ export function HomePage() {
                 <PlatformsCarousel />
               </section>
 
-              <section
-                className="space-y-8 p-6 
-
-
-
-"
-              >
+              <section className="space-y-8 p-6">
                 <Lfg />
               </section>
             </div>
