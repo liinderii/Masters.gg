@@ -8,6 +8,7 @@ import { auth } from "./middlewares/auth.mjs";
 import cors from "cors";
 import { postRouter } from "./routes/postRoute.mjs";
 import { photoRouter } from "./routes/photoRoute.mjs";
+import { videoRouter } from "./routes/videoRoute.mjs";
 
 dotenv.config();
 
@@ -34,6 +35,7 @@ app.use(auth);
 
 app.use("/posts", postRouter);
 app.use("/photos", photoRouter);
+app.use("/videos", videoRouter);
 
 app.listen(port, async () => {
   await mongoose.connect(dbUrl);
