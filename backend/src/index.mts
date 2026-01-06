@@ -7,13 +7,14 @@ import cookieParser from "cookie-parser";
 import { auth } from "./middlewares/auth.mjs";
 import cors from "cors";
 import { postRouter } from "./routes/postRoute.mjs";
+import { photoRouter } from "./routes/photoRoute.mjs";
+
 dotenv.config();
 
 const port = process.env.PORT || 3000;
 const dbUrl = process.env.MONGO_URL;
 const clientOrigin = process.env.CLIENT_ORIGIN || "http://localhost:5173";
 if (!dbUrl) throw Error("No MONGO_URL in env file");
-
 if (!dbUrl) throw Error("No MONGO_URL in env file");
 
 const app = express();
@@ -32,6 +33,7 @@ app.use("/login", loginRouter);
 app.use(auth);
 
 app.use("/posts", postRouter);
+app.use("/photos", photoRouter);
 
 app.listen(port, async () => {
   await mongoose.connect(dbUrl);
