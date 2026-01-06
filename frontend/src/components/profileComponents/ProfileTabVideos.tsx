@@ -1,142 +1,194 @@
+// src/components/profile/ProfileVideos.tsx
+import { useEffect, useRef, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-
-import { mockProfileVideos } from "../../data/mockProfileVideos";
 import { Input } from "../ui/input";
+import type { Video } from "../../types/video";
+import { VideoActionsDialog } from "./VideoActionsDialog";
+
+const API_BASE = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:3000";
 
 export const ProfileVideos = () => {
-  const data = mockProfileVideos;
-  return (
-    <>
-      <div className="space-y-6">
-        <Card className="w-full mx-auto max-w-[1600px] overflow-hidden gap-0 border shadow-none">
-          <CardHeader>
-            <CardTitle>Videos</CardTitle>
-          </CardHeader>
-          <CardContent className="flex flex-col gap-4">
-            <Input className="p-2 rounded-md" placeholder="Search videos..." />
-            <div className="flex gap-4 flex-wrap">
-              <button className="px-3 py-2 bg-emerald-500 text-white rounded-md border border-white/20">
-                Your videos ({data.yourVideos.length})
-              </button>
-              <button className="px-3 py-2 bg-emerald-500 text-white rounded-md border border-white/20">
-                Tagged videos ({data.taggedVideos.length})
-              </button>
-              <button className="px-3 py-2 bg-emerald-500 text-white rounded-md border border-white/20">
-                Live streams ({data.liveStreams.length})
-              </button>
-              <button className="px-3 py-2 bg-emerald-500 text-white rounded-md hover:opacity-90">
-                Add video / Go live
-              </button>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+  const [videos, setVideos] = useState<Video[]>([]);
+  const [query, setQuery] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [isUploading, setIsUploading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  async function fetchVideos() {
+    try {
+      setIsLoading(true);
+      setError(null);
+
+      const res = await fetch(`${API_BASE}/videos`, { credentials: "include" });
+
+      if (res.status === 401 || res.status === 403) {
+        setError("Unauthorized");
+        setVideos([]);
+        return;
+      }
+      if (!res.ok) throw new Error("Failed to fetch videos");
+
+      const data = (await res.json()) as Video[];
+      setVideos(data);
+    } catch (e) {
+      console.error(e);
+      setError("An error occurred while fetching videos.");
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    fetchVideos();
+  }, []);
+
+  const handlePickVideo = () => fileInputRef.current?.click();
+
+  const handleUpload = async (file: File) => {
+    try {
+      setIsUploading(true);
+      setError(null);
+
+      const form = new FormData();
+      form.append("file", file);
+      form.append("title", file.name.replace(/\.[^/.]+$/, ""));
+      form.append("game", "");
+
+      const res = await fetch(`${API_BASE}/videos`, {
+        method: "POST",
+        credentials: "include",
+        body: form,
+      });
+
+      if (res.status === 401 || res.status === 403) {
+        setError("Unauthorized");
+        return;
+      }
+      if (!res.ok) {
+        const msg = await res.json().catch(() => null);
+        throw new Error(msg?.message ?? "Upload failed");
+      }
+
+      const created = (await res.json()) as Video;
+      setVideos((prev) => [created, ...prev]);
+    } catch (e: any) {
+      console.error(e);
+      setError(e.message ?? "An error occurred while uploading the video.");
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const deleteVideo = async (videoId: string) => {
+    try {
+      setError(null);
+
+      const res = await fetch(`${API_BASE}/videos/${videoId}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+
+      if (res.status === 401 || res.status === 403) {
+        setError("Unauthorized");
+        return;
+      }
+      if (!res.ok) throw new Error("Failed to delete video");
+
+      setVideos((prev) => prev.filter((v) => v._id !== videoId));
+    } catch (e) {
+      console.error(e);
+      setError("Could not delete video.");
+    }
+  };
+
+  const filtered = videos.filter((v) => {
+    const hay = `${v.title ?? ""} ${v.game ?? ""}`.toLowerCase();
+    return hay.includes(query.toLowerCase());
+  });
+
+  return (
+    <div className="space-y-6">
+      {/* ACTION CARD */}
       <Card className="w-full mx-auto max-w-[1600px] overflow-hidden gap-0 border shadow-none">
         <CardHeader>
-          <CardTitle>Your Videos</CardTitle>
+          <CardTitle>Videos</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
-          {data.yourVideos.length === 0 && (
-            <p className="text-sm text-gray-400">No videos to display.</p>
-          )}
 
-          {data.yourVideos.map((video) => (
-            <div
-              key={video.id}
-              className="border border-white/10 rounded overflow-hidden"
+        <CardContent className="flex flex-col gap-4">
+          <Input
+            className="p-2 rounded-md"
+            placeholder="Search videos..."
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
+
+          <div className="flex gap-4 flex-wrap">
+            <button className="px-3 py-2 bg-emerald-500 text-white rounded-md border border-white/20">
+              Your videos ({videos.length})
+            </button>
+
+            <button className="px-3 py-2 bg-emerald-500 text-white rounded-md border border-white/20">
+              Tagged videos (0)
+            </button>
+
+            <button className="px-3 py-2 bg-emerald-500 text-white rounded-md border border-white/20">
+              Live streams (0)
+            </button>
+
+            <button
+              type="button"
+              className="px-3 py-2 bg-emerald-500 text-white rounded-md hover:opacity-90 disabled:opacity-60"
+              onClick={handlePickVideo}
+              disabled={isUploading}
             >
-              {video.thumbnailUrl && (
-                <img
-                  src={video.thumbnailUrl}
-                  alt={video.title}
-                  className="w-full object-cover"
-                />
-              )}
+              {isUploading ? "Uploading..." : "Add video / Go live"}
+            </button>
 
-              <p>{video.title}</p>
-              <p>
-                {video.game} {video.views} views
-                {new Date(video.createdAt).toLocaleDateString()}
-              </p>
-            </div>
-          ))}
-          <button className="text-sm text-emerald-400 hover:underline">
-            View
-          </button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="video/*"
+              className="hidden"
+              onChange={(e) => {
+                const f = e.target.files?.[0];
+                if (f) handleUpload(f);
+                e.currentTarget.value = "";
+              }}
+            />
+          </div>
+
+          {error && <p className="text-sm text-red-500">{error}</p>}
         </CardContent>
       </Card>
 
-      <Card>
+      {/* YOUR VIDEOS (GRID LIKE PHOTOS) */}
+      <Card className="w-full mx-auto max-w-[1600px] overflow-hidden gap-0 border shadow-none">
         <CardHeader>
-          <CardTitle>Tagged Videos</CardTitle>
+          <CardTitle>Your videos</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
-          {data.taggedVideos.length === 0 && (
-            <p className="text-sm text-gray-400">
-              No tagged videos to display.
+
+        <CardContent className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {isLoading && (
+            <p className="text-sm text-gray-400 col-span-full">Loading…</p>
+          )}
+
+          {!isLoading && filtered.length === 0 && !error && (
+            <p className="text-sm text-gray-400 col-span-full">
+              No videos to display.
             </p>
           )}
 
-          {data.taggedVideos.map((video) => (
-            <div
-              key={video.id}
-              className="border border-white/10 rounded overflow-hidden"
-            >
-              {video.thumbnailUrl && (
-                <img
-                  src={video.thumbnailUrl}
-                  alt={video.title}
-                  className="w-full object-cover"
-                />
-              )}
-
-              <p>{video.title}</p>
-              <p>
-                {video.game} {video.views} views
-                {new Date(video.createdAt).toLocaleDateString()}
-              </p>
-            </div>
+          {filtered.map((video) => (
+            <VideoActionsDialog
+              key={video._id}
+              video={video}
+              onDelete={deleteVideo}
+            />
           ))}
-          <button className="text-sm text-emerald-400 hover:underline">
-            View
-          </button>
         </CardContent>
       </Card>
-      <Card>
-        <CardHeader>
-          <CardTitle>Live Streams</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {data.liveStreams.length === 0 && (
-            <p className="text-sm text-gray-400">No live streams to display.</p>
-          )}
-
-          {data.liveStreams.map((stream) => (
-            <div
-              key={stream.id}
-              className="border border-white/10 rounded overflow-hidden"
-            >
-              {stream.thumbnailUrl && (
-                <img
-                  src={stream.thumbnailUrl}
-                  alt={stream.title}
-                  className="w-full object-cover"
-                />
-              )}
-
-              <p>{stream.title}</p>
-              <p>
-                {stream.game} {stream.views} viewers
-                {new Date(stream.createdAt).toLocaleDateString()}
-              </p>
-            </div>
-          ))}
-          <button className="text-sm text-emerald-400 hover:underline">
-            View
-          </button>
-        </CardContent>
-      </Card>
-    </>
+    </div>
   );
 };
