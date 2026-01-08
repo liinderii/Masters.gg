@@ -11,6 +11,10 @@ import { photoRouter } from "./routes/photoRoute.mjs";
 import { videoRouter } from "./routes/videoRoute.mjs";
 import { externalRouter } from "./routes/rawgRoute.mjs";
 import { profileTabGames } from "./routes/gameRoute.mjs";
+import { friendsRouter } from "./routes/friendsRoute.mjs";
+import { profileColumnsRouter } from "./routes/aboutRoute.mjs";
+import { profileMeRouter } from "./routes/profileEditRoute.mjs";
+
 dotenv.config();
 
 const port = process.env.PORT || 3000;
@@ -39,6 +43,9 @@ app.use("/photos", photoRouter);
 app.use("/videos", videoRouter);
 app.use("/external", externalRouter);
 app.use("/profile", profileTabGames);
+app.use("/friends", friendsRouter);
+app.use("/profile-columns", profileColumnsRouter);
+app.use("/me", profileMeRouter);
 
 app.listen(port, async () => {
   await mongoose.connect(dbUrl);
