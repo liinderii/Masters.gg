@@ -8,6 +8,8 @@ const videoSchema = new Schema(
     game: { type: String, default: "" },
     views: { type: Number, default: 0 },
 
+    origin: { type: String, enum: ["profile", "post"], default: "profile" },
+
     createdAt: { type: Date, default: Date.now },
   },
   { timestamps: false }

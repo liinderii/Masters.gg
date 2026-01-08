@@ -24,8 +24,6 @@ export const login = async (email: string, password: string) => {
 
   if (!foundUser) return null;
 
-  // password -> foundUser.password
-
   const success = await bcrypt.compare(password, foundUser.password);
   if (success) {
     return convertDbUserToDto(foundUser);

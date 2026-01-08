@@ -17,7 +17,10 @@ videoRouter.get("/", async (req, res) => {
     const userId = (req as any).userId as string;
     if (!userId) return res.status(401).json({ message: "No user in request" });
 
-    const videos = await Video.find({ userId }).sort({ createdAt: -1 });
+    const videos = await Video.find({ userId, origin: "profile" }).sort({
+      createdAt: -1,
+    });
+
     return res.status(200).json(videos);
   } catch {
     return res.status(500).json({ message: "Server error" });
@@ -35,6 +38,11 @@ videoRouter.post("/", uploadVideo.single("file"), async (req, res) => {
     const title = (req.body?.title ?? "").toString();
     const game = (req.body?.game ?? "").toString();
 
+    const origin =
+      req.body?.origin === "post" || req.body?.origin === "profile"
+        ? req.body.origin
+        : "profile";
+
     const bucket = getBucket();
 
     const uploadStream = bucket.openUploadStream(file.originalname, {
@@ -51,6 +59,7 @@ videoRouter.post("/", uploadVideo.single("file"), async (req, res) => {
         title: title.trim(),
         game: game.trim(),
         views: 0,
+        origin,
         createdAt: new Date(),
       });
 
@@ -69,10 +78,6 @@ videoRouter.post("/", uploadVideo.single("file"), async (req, res) => {
   }
 });
 
-/**
- * GET /videos/:videoId/file - streama video (för <video src="...">)
- * Obs: Detta är "basic streaming". Vill du ha riktig scrub/seek krävs Range-stöd.
- */
 videoRouter.get("/:videoId/file", async (req, res) => {
   try {
     const userId = (req as any).userId as string;
@@ -91,7 +96,6 @@ videoRouter.get("/:videoId/file", async (req, res) => {
 
     const bucket = getBucket();
 
-    // sätt en rimlig content-type
     res.setHeader("Content-Type", "video/mp4");
 
     const downloadStream = bucket.openDownloadStream(

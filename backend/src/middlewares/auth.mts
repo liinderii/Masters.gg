@@ -33,7 +33,6 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
       return res.status(403).send("Faking a user are we???");
     }
   } catch {
-    // Ogiltig eller utgången token
     return res.status(401).end();
   }
 };

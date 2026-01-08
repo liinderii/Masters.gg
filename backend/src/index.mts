@@ -9,7 +9,8 @@ import cors from "cors";
 import { postRouter } from "./routes/postRoute.mjs";
 import { photoRouter } from "./routes/photoRoute.mjs";
 import { videoRouter } from "./routes/videoRoute.mjs";
-
+import { externalRouter } from "./routes/rawgRoute.mjs";
+import { profileTabGames } from "./routes/gameRoute.mjs";
 dotenv.config();
 
 const port = process.env.PORT || 3000;
@@ -36,6 +37,8 @@ app.use(auth);
 app.use("/posts", postRouter);
 app.use("/photos", photoRouter);
 app.use("/videos", videoRouter);
+app.use("/external", externalRouter);
+app.use("/profile", profileTabGames);
 
 app.listen(port, async () => {
   await mongoose.connect(dbUrl);

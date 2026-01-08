@@ -17,15 +17,16 @@ photoRouter.get("/", async (req, res) => {
     const userId = (req as any).userId as string;
     if (!userId) return res.status(401).json({ message: "No user in request" });
 
-    const photos = await Photo.find({ userId }).sort({ createdAt: -1 });
+    const photos = await Photo.find({ userId, origin: "profile" }).sort({
+      createdAt: -1,
+    });
+
     return res.status(200).json(photos);
   } catch (error) {
     return res.status(500).json({ message: "Server error" });
   }
 });
 
-// POST /photos - ladda upp EN bild
-// multipart/form-data med fält: file (och ev caption)
 photoRouter.post("/", uploadPhoto.single("file"), async (req, res) => {
   try {
     const userId = (req as any).userId as string;
@@ -34,11 +35,14 @@ photoRouter.post("/", uploadPhoto.single("file"), async (req, res) => {
     const file = req.file;
     const caption = (req.body?.caption ?? "").toString();
 
+    const origin =
+      req.body?.origin === "post" || req.body?.origin === "profile"
+        ? req.body.origin
+        : "profile";
+
     if (!file) return res.status(400).json({ message: "No file provided" });
 
     const bucket = getBucket();
-
-    // behåll filändelsen om du vill (valfritt)
     const filename = file.originalname || "upload";
 
     const uploadStream = bucket.openUploadStream(filename, {
@@ -53,6 +57,7 @@ photoRouter.post("/", uploadPhoto.single("file"), async (req, res) => {
         userId,
         fileId: uploadStream.id.toString(),
         caption: caption.trim(),
+        origin,
         createdAt: new Date(),
       });
 
@@ -108,27 +113,23 @@ photoRouter.delete("/:photoId", async (req, res) => {
 
     const { photoId } = req.params;
 
-    // 1) Hämta photo-dokumentet
     const photo = await Photo.findById(photoId);
     if (!photo) {
       return res.status(404).json({ message: "Not found" });
     }
 
-    // 2) Kontrollera ägarskap
     if (photo.userId !== userId) {
       return res.status(403).json({ message: "Forbidden" });
     }
 
     const bucket = getBucket();
 
-    // 3) Ta bort GridFS-filen
     if (ObjectId.isValid(photo.fileId)) {
       await bucket.delete(new ObjectId(photo.fileId));
     } else {
       console.warn("Invalid GridFS fileId:", photo.fileId);
     }
 
-    // 4) Ta bort metadata-dokumentet
     await Photo.deleteOne({ _id: photoId });
 
     return res.status(200).json({ message: "Deleted", photoId });
