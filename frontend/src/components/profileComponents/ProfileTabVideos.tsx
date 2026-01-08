@@ -1,4 +1,3 @@
-// src/components/profile/ProfileVideos.tsx
 import { useEffect, useRef, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Input } from "../ui/input";
@@ -55,6 +54,7 @@ export const ProfileVideos = () => {
       form.append("file", file);
       form.append("title", file.name.replace(/\.[^/.]+$/, ""));
       form.append("game", "");
+      form.append("origin", "profile");
 
       const res = await fetch(`${API_BASE}/videos`, {
         method: "POST",
@@ -110,7 +110,6 @@ export const ProfileVideos = () => {
 
   return (
     <div className="space-y-6">
-      {/* ACTION CARD */}
       <Card className="w-full mx-auto max-w-[1600px] overflow-hidden gap-0 border shadow-none">
         <CardHeader>
           <CardTitle>Videos</CardTitle>
@@ -163,7 +162,6 @@ export const ProfileVideos = () => {
         </CardContent>
       </Card>
 
-      {/* YOUR VIDEOS (GRID LIKE PHOTOS) */}
       <Card className="w-full mx-auto max-w-[1600px] overflow-hidden gap-0 border shadow-none">
         <CardHeader>
           <CardTitle>Your videos</CardTitle>

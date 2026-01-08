@@ -1,5 +1,3 @@
-// src/mocks/profilePhotos.ts
-
 export type Photo = {
   id: string;
   url: string;

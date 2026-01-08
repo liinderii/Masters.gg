@@ -51,7 +51,6 @@ export function ProfileTabs() {
           </TabsTrigger>
         </TabsList>
 
-        {/* Här använder du nu importerna */}
         <TabsContent value="posts">
           <ProfilePosts />
         </TabsContent>

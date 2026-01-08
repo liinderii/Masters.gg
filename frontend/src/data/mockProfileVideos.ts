@@ -1,5 +1,3 @@
-// src/data/mockProfileVideos.ts
-
 export type Video = {
   id: string;
   title: string;

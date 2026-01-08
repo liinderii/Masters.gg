@@ -1,9 +1,7 @@
-// src/mocks/profileAbout.ts
-
 export type AboutSection = {
   id: string;
   title: string;
-  content?: string[]; // text, info, list items
+  content?: string[];
 };
 
 export type ProfileAboutData = {

@@ -1,5 +1,3 @@
-// src/mocks/profileFriends.ts
-
 export type Friend = {
   id: string;
   name: string;

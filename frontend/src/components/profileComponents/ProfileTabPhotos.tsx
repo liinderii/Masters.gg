@@ -56,6 +56,7 @@ export const ProfilePhotos = () => {
       const form = new FormData();
       form.append("file", file);
       form.append("caption", "");
+      form.append("origin", "profile");
 
       const res = await fetch(`${API_BASE}/photos`, {
         method: "POST",

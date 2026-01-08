@@ -1,4 +1,3 @@
-// src/components/profile/VideoActionsDialog.tsx
 import {
   Dialog,
   DialogContent,
@@ -24,7 +23,6 @@ export function VideoActionsDialog({ video, onDelete }: Props) {
       <DialogTrigger asChild>
         <button type="button" className="w-full text-left">
           <div className="relative w-full h-48 rounded border border-white/10 overflow-hidden hover:opacity-90 transition">
-            {/* Thumbnail preview */}
             <video
               className="w-full h-full object-cover"
               src={src}
@@ -33,7 +31,6 @@ export function VideoActionsDialog({ video, onDelete }: Props) {
               playsInline
             />
 
-            {/* Overlay (title + meta) */}
             <div className="absolute inset-x-0 bottom-0 p-2 bg-black/55">
               <p className="text-sm font-medium truncate">
                 {video.title || "Untitled video"}
@@ -46,7 +43,6 @@ export function VideoActionsDialog({ video, onDelete }: Props) {
               </p>
             </div>
 
-            {/* Play icon indicator */}
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="px-3 py-1 rounded-full bg-black/55 border border-white/15 text-xs">
                 Play

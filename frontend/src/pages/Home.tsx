@@ -20,14 +20,12 @@ export function HomePage() {
           className="flex w-full items-start bg-zinc-900 text-white
 "
         >
-          {/* Left sidebar */}
           <aside className="w-80 shrink-0 sticky top-0 h-dvh">
             <div className="h-full overflow-y-auto p-10">
               <LeftSidebar />
             </div>
           </aside>
 
-          {/* Main */}
           <main className="min-w-0 flex-1 p-6 flex justify-center">
             <div className="w-full max-w-5xl">
               <Input
@@ -54,7 +52,6 @@ export function HomePage() {
             </div>
           </main>
 
-          {/* Right sidebar */}
           <aside className="w-80 shrink-0 sticky top-0 h-dvh">
             <div className="h-full overflow-y-auto p-10">
               <RightSidebar />
