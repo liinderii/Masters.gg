@@ -2,7 +2,7 @@ import { buttons } from "../../Styles/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 
 import { ProfilePosts } from "./ProfileTabPosts";
-import { ProfileAbout } from "./ProfileTabAbout";
+import { ProfileAboutColumns } from "./ProfileTabAbout";
 import { ProfilePhotos } from "./ProfileTabPhotos";
 import { ProfileVideos } from "./ProfileTabVideos";
 import { ProfileFriends } from "./ProfileTabFriends";
@@ -56,7 +56,7 @@ export function ProfileTabs() {
         </TabsContent>
 
         <TabsContent value="about">
-          <ProfileAbout />
+          <ProfileAboutColumns />
         </TabsContent>
 
         <TabsContent value="friends">

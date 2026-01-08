@@ -1,4 +1,3 @@
-// src/components/profile/ProfileTabPhotos.tsx
 import { useEffect, useRef, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import type { Photo } from "../../types/photo";
@@ -141,7 +140,6 @@ export const ProfilePhotos = () => {
 
   return (
     <div className="space-y-6">
-      {/* ACTION CARD */}
       <Card className="w-full mx-auto max-w-[1600px] overflow-hidden border shadow-none">
         <CardHeader>
           <CardTitle>Photos</CardTitle>
@@ -183,7 +181,6 @@ export const ProfilePhotos = () => {
         </CardContent>
       </Card>
 
-      {/* YOUR PHOTOS */}
       <Card className="w-full mx-auto max-w-[1600px] overflow-hidden border shadow-none">
         <CardHeader>
           <CardTitle>Your photos</CardTitle>

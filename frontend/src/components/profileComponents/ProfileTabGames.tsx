@@ -236,7 +236,6 @@ export const ProfileGames = () => {
     <div className="space-y-10">
       {error && <p className="text-sm text-red-500">{error}</p>}
 
-      {/* GAMES */}
       <section className="space-y-4">
         <div className="flex items-center justify-between">
           <h2>Featured Games</h2>
