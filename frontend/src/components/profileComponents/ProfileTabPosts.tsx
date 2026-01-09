@@ -16,6 +16,40 @@ import { PhotoActionsDialog } from "./PhotoActionsDialog";
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:3000";
 
+type ProfileMe = {
+  avatarPhotoId: string;
+  coverPhotoId: string;
+  bio: string;
+  intro: {
+    livesIn: string;
+    from: string;
+    relationshipStatus: string;
+  };
+};
+
+async function getMyProfileMe(): Promise<ProfileMe> {
+  const res = await fetch(`${API_BASE}/me/profile`, { credentials: "include" });
+  if (!res.ok) throw new Error("Failed to load profile");
+  const data = (await res.json()) as any;
+
+  return {
+    avatarPhotoId:
+      typeof data.avatarPhotoId === "string" ? data.avatarPhotoId : "",
+    coverPhotoId:
+      typeof data.coverPhotoId === "string" ? data.coverPhotoId : "",
+    bio: typeof data.bio === "string" ? data.bio : "",
+    intro: {
+      livesIn:
+        typeof data.intro?.livesIn === "string" ? data.intro.livesIn : "",
+      from: typeof data.intro?.from === "string" ? data.intro.from : "",
+      relationshipStatus:
+        typeof data.intro?.relationshipStatus === "string"
+          ? data.intro.relationshipStatus
+          : "",
+    },
+  };
+}
+
 function formatDate(value: string) {
   try {
     return new Date(value).toLocaleString();
@@ -42,6 +76,8 @@ type PostUIState = {
 };
 
 export const ProfilePosts = () => {
+  const [profileMe, setProfileMe] = useState<ProfileMe | null>(null);
+
   const [posts, setPosts] = useState<Post[]>([]);
   const [newPost, setNewPost] = useState("");
   const [isLoading, setIsLoading] = useState(true);
@@ -109,8 +145,29 @@ export const ProfilePosts = () => {
       }
     }
 
+    async function fetchProfileMe() {
+      try {
+        const p = await getMyProfileMe();
+        setProfileMe(p);
+      } catch (e) {
+        console.error(e);
+        setProfileMe(null);
+      }
+    }
+
+    // Lyssna på uppdateringar från ProfileHeader (utan Context)
+    const onUpdated = (ev: Event) => {
+      const detail = (ev as CustomEvent).detail as ProfileMe | undefined;
+      if (!detail) return;
+      setProfileMe(detail);
+    };
+    window.addEventListener("profile:updated", onUpdated);
+
     fetchPosts();
     fetchPhotos();
+    fetchProfileMe();
+
+    return () => window.removeEventListener("profile:updated", onUpdated);
   }, []);
 
   const sidebarPhotos = useMemo(() => photos.slice(0, 6), [photos]);
@@ -308,15 +365,44 @@ export const ProfilePosts = () => {
     }
   };
 
+  const introLines = useMemo(() => {
+    const i = profileMe?.intro;
+    if (!i) return [];
+    const lines: string[] = [];
+    if (i.livesIn?.trim()) lines.push(`Lives in ${i.livesIn.trim()}`);
+    if (i.from?.trim()) lines.push(`From ${i.from.trim()}`);
+    if (i.relationshipStatus?.trim()) lines.push(i.relationshipStatus.trim());
+    return lines;
+  }, [profileMe?.intro]);
+
   return (
     <div className="mt-16 flex gap-10">
       <aside className="w-[520px] shrink-0 space-y-4">
         <Card className="border shadow-none">
           <CardHeader>
-            <CardTitle>Your Posts</CardTitle>
+            <CardTitle>Details</CardTitle>
           </CardHeader>
-          <CardContent className="text-sm text-gray-300">
+
+          <CardContent className="text-sm text-black space-y-3">
             <p>Share updates, photos, and videos with your followers.</p>
+
+            {(profileMe?.bio?.trim() || introLines.length > 0) && (
+              <div className="rounded-xl border border-white/10 bg-black/20 p-4 space-y-2">
+                {profileMe?.bio?.trim() && (
+                  <p className="text-sm text-gray-200">
+                    {profileMe.bio.trim()}
+                  </p>
+                )}
+
+                {introLines.length > 0 && (
+                  <ul className="text-sm text-black space-y-1">
+                    {introLines.map((l) => (
+                      <li key={l}> {l}</li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            )}
           </CardContent>
         </Card>
 

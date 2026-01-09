@@ -27,9 +27,15 @@ type HeaderState = {
   coverPhotoId: string | null;
 };
 
-type ProfileMe = {
+export type ProfileMe = {
   avatarPhotoId: string; // Photo._id eller ""
   coverPhotoId: string; // Photo._id eller ""
+  bio: string;
+  intro: {
+    livesIn: string;
+    from: string;
+    relationshipStatus: string;
+  };
 };
 
 async function getMyProfileMe(): Promise<ProfileMe> {
@@ -42,6 +48,16 @@ async function getMyProfileMe(): Promise<ProfileMe> {
       typeof data.avatarPhotoId === "string" ? data.avatarPhotoId : "",
     coverPhotoId:
       typeof data.coverPhotoId === "string" ? data.coverPhotoId : "",
+    bio: typeof data.bio === "string" ? data.bio : "",
+    intro: {
+      livesIn:
+        typeof data.intro?.livesIn === "string" ? data.intro.livesIn : "",
+      from: typeof data.intro?.from === "string" ? data.intro.from : "",
+      relationshipStatus:
+        typeof data.intro?.relationshipStatus === "string"
+          ? data.intro.relationshipStatus
+          : "",
+    },
   };
 }
 
@@ -61,11 +77,20 @@ async function updateMyProfileMe(payload: ProfileMe): Promise<ProfileMe> {
       typeof data.avatarPhotoId === "string" ? data.avatarPhotoId : "",
     coverPhotoId:
       typeof data.coverPhotoId === "string" ? data.coverPhotoId : "",
+    bio: typeof data.bio === "string" ? data.bio : "",
+    intro: {
+      livesIn:
+        typeof data.intro?.livesIn === "string" ? data.intro.livesIn : "",
+      from: typeof data.intro?.from === "string" ? data.intro.from : "",
+      relationshipStatus:
+        typeof data.intro?.relationshipStatus === "string"
+          ? data.intro.relationshipStatus
+          : "",
+    },
   };
 }
 
 export const ProfileHeader = () => {
-  // FRONTEND state (för preview och modal)
   const [header, setHeader] = useState<HeaderState>({
     bio: "",
     intro: { livesIn: "", from: "", relationshipStatus: "" },
@@ -88,25 +113,29 @@ export const ProfileHeader = () => {
     null
   );
 
-  // 1) Ladda sparad avatar/cover från backend
+  // 1) Ladda sparad profil från backend
   useEffect(() => {
     (async () => {
       try {
         const me = await getMyProfileMe();
 
-        setHeader((prev) => ({
-          ...prev,
+        setHeader({
+          bio: me.bio ?? "",
+          intro: {
+            livesIn: me.intro?.livesIn ?? "",
+            from: me.intro?.from ?? "",
+            relationshipStatus: me.intro?.relationshipStatus ?? "",
+          },
           avatarPhotoId: me.avatarPhotoId ? me.avatarPhotoId : null,
           coverPhotoId: me.coverPhotoId ? me.coverPhotoId : null,
-        }));
+        });
       } catch (e) {
         console.error(e);
-        // fallback: behåll defaults
       }
     })();
   }, []);
 
-  // 2) Ladda photos (för att kunna välja cover/avatar från photos)
+  // 2) Ladda photos
   useEffect(() => {
     (async () => {
       try {
@@ -141,7 +170,6 @@ export const ProfileHeader = () => {
   }, [header.avatarPhotoId]);
 
   function startEdit() {
-    // Prefill draft från nuvarande state
     setDraftBio(header.bio ?? "");
     setDraftLivesIn(header.intro?.livesIn ?? "");
     setDraftFrom(header.intro?.from ?? "");
@@ -150,11 +178,16 @@ export const ProfileHeader = () => {
     setDraftCoverPhotoId(header.coverPhotoId);
   }
 
-  // I detta steg: vi sparar bara avatar/cover.
   async function saveEdit() {
-    // Uppdatera UI direkt (snabb känsla)
+    // Uppdatera UI direkt
     setHeader((prev) => ({
       ...prev,
+      bio: draftBio,
+      intro: {
+        livesIn: draftLivesIn,
+        from: draftFrom,
+        relationshipStatus: draftRelationshipStatus,
+      },
       avatarPhotoId: draftAvatarPhotoId,
       coverPhotoId: draftCoverPhotoId,
     }));
@@ -163,31 +196,40 @@ export const ProfileHeader = () => {
       const saved = await updateMyProfileMe({
         avatarPhotoId: (draftAvatarPhotoId ?? "").trim(),
         coverPhotoId: (draftCoverPhotoId ?? "").trim(),
+        bio: draftBio.trim(),
+        intro: {
+          livesIn: draftLivesIn.trim(),
+          from: draftFrom.trim(),
+          relationshipStatus: draftRelationshipStatus.trim(),
+        },
       });
 
-      // Sätt exakt vad backend sparade (source of truth)
-      setHeader((prev) => ({
-        ...prev,
+      setHeader({
+        bio: saved.bio ?? "",
+        intro: {
+          livesIn: saved.intro?.livesIn ?? "",
+          from: saved.intro?.from ?? "",
+          relationshipStatus: saved.intro?.relationshipStatus ?? "",
+        },
         avatarPhotoId: saved.avatarPhotoId ? saved.avatarPhotoId : null,
         coverPhotoId: saved.coverPhotoId ? saved.coverPhotoId : null,
-      }));
+      });
+
+      // Viktigt: berätta för ProfilePosts att profilen uppdaterats
+      window.dispatchEvent(
+        new CustomEvent("profile:updated", { detail: saved })
+      );
     } catch (e) {
       console.error(e);
-      // Vill du revert:a vid fel: hämta om med getMyProfileMe() här.
     }
   }
 
-  // Modal: vit bakgrund
   const modalBase =
     "bg-white text-black border border-black/10 sm:max-w-[920px]";
-
-  // Sektion-styling för luftigare layout + tydlig gruppering
   const sectionBase =
     "rounded-xl border border-black/10 bg-black/[0.02] p-6 space-y-5";
-
   const sectionHeaderTitle = "text-sm font-semibold text-black";
   const sectionHeaderActions = "flex items-center gap-2";
-
   const ghostBtn =
     "px-3 py-2 text-sm rounded-md border border-black/10 hover:bg-black/5 disabled:opacity-50 disabled:hover:bg-transparent";
   const addBtn =
@@ -195,7 +237,6 @@ export const ProfileHeader = () => {
 
   return (
     <Card className="w-full mx-auto max-w-[1600px] overflow-hidden gap-0 border-0 shadow-none">
-      {/* Cover photo title */}
       <div className="px-2 pb-2 text-sm font-semibold text-white/80">
         Cover photo
       </div>
@@ -226,7 +267,7 @@ export const ProfileHeader = () => {
           </div>
 
           <div className="mt-20 flex gap-2">
-            {/* Add Story - behåller din */}
+            {/* Add Story */}
             <Dialog>
               <DialogTrigger asChild>
                 <button className="rounded px-8 w-50 h-12 text-sm font-bold text-white bg-violet-400 hover:bg-violet-500 font-semibold ">
@@ -443,7 +484,7 @@ export const ProfileHeader = () => {
                     </p>
                   </section>
 
-                  {/* BIO SECTION (oförändrad, men sparas ej i detta steg) */}
+                  {/* BIO */}
                   <section className={sectionBase}>
                     <div className="flex items-center justify-between">
                       <h3 className={sectionHeaderTitle}>Bio</h3>
@@ -462,7 +503,7 @@ export const ProfileHeader = () => {
                     />
                   </section>
 
-                  {/* INTRO SECTION (oförändrad, men sparas ej i detta steg) */}
+                  {/* INTRO */}
                   <section className={sectionBase}>
                     <div className="flex items-center justify-between">
                       <h3 className={sectionHeaderTitle}>Intro</h3>
