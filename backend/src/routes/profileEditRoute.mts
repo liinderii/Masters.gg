@@ -5,7 +5,7 @@ export const profileMeRouter = Router();
 
 /**
  * GET /me/profile
- * Hämtar min profil, skapar ett tomt dokument om det saknas.
+ * Hämtar min profil, skapar tomt dokument om det saknas.
  */
 profileMeRouter.get("/profile", async (req, res) => {
   try {
@@ -19,6 +19,8 @@ profileMeRouter.get("/profile", async (req, res) => {
         userId,
         avatarPhotoId: "",
         coverPhotoId: "",
+        bio: "",
+        intro: { livesIn: "", from: "", relationshipStatus: "" },
         updatedAt: new Date(),
       });
     }
@@ -32,7 +34,7 @@ profileMeRouter.get("/profile", async (req, res) => {
 
 /**
  * PUT /me/profile
- * Sparar avatar/cover.
+ * Sparar avatar/cover + bio/intro.
  */
 profileMeRouter.put("/profile", async (req, res) => {
   try {
@@ -44,12 +46,28 @@ profileMeRouter.put("/profile", async (req, res) => {
     const coverPhotoId =
       typeof req.body?.coverPhotoId === "string" ? req.body.coverPhotoId : "";
 
+    const bio = typeof req.body?.bio === "string" ? req.body.bio : "";
+
+    const intro = req.body?.intro;
+    const livesIn = typeof intro?.livesIn === "string" ? intro.livesIn : "";
+    const from = typeof intro?.from === "string" ? intro.from : "";
+    const relationshipStatus =
+      typeof intro?.relationshipStatus === "string"
+        ? intro.relationshipStatus
+        : "";
+
     const doc = await UserProfile.findOneAndUpdate(
       { userId },
       {
         $set: {
           avatarPhotoId: avatarPhotoId.trim(),
           coverPhotoId: coverPhotoId.trim(),
+          bio: bio.trim(),
+          intro: {
+            livesIn: livesIn.trim(),
+            from: from.trim(),
+            relationshipStatus: relationshipStatus.trim(),
+          },
           updatedAt: new Date(),
         },
       },

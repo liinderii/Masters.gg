@@ -1,12 +1,23 @@
 import { Schema, model } from "mongoose";
 
+const introSchema = new Schema(
+  {
+    livesIn: { type: String, default: "" },
+    from: { type: String, default: "" },
+    relationshipStatus: { type: String, default: "" },
+  },
+  { _id: false }
+);
+
 const userProfileSchema = new Schema(
   {
     userId: { type: String, required: true, unique: true },
 
-    // Vi börjar smått: bara dessa två nu
-    avatarPhotoId: { type: String, default: "" }, // Photo._id
-    coverPhotoId: { type: String, default: "" }, // Photo._id
+    avatarPhotoId: { type: String, default: "" },
+    coverPhotoId: { type: String, default: "" },
+
+    bio: { type: String, default: "" },
+    intro: { type: introSchema, default: () => ({}) },
 
     updatedAt: { type: Date, default: Date.now },
   },
