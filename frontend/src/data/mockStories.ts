@@ -3,8 +3,8 @@ import type { Stories } from "../types/stories";
 export const mockStories: Stories[] = [
   {
     id: "1",
-    type: "image",
-    src: "/stories/story1.jpg",
+    type: "video",
+    src: "/stories/story1.mp4",
     title: "Epic Game Highlights",
   },
   {
@@ -15,8 +15,8 @@ export const mockStories: Stories[] = [
   },
   {
     id: "3",
-    type: "image",
-    src: "/stories/story3.jpg",
+    type: "video",
+    src: "/stories/story3.mp4",
     title: "Tournament Recap",
   },
   {
@@ -27,8 +27,8 @@ export const mockStories: Stories[] = [
   },
   {
     id: "5",
-    type: "image",
-    src: "/stories/story5.jpg",
+    type: "video",
+    src: "/stories/story5.mp4",
     title: "Behind the Scenes",
   },
   {

@@ -376,8 +376,9 @@ export const ProfilePosts = () => {
   }, [profileMe?.intro]);
 
   return (
-    <div className="mt-16 flex gap-10">
-      <aside className="w-[520px] shrink-0 space-y-4">
+    <div className="mt-16 flex gap-10 items-start">
+      {/* ✅ HELA ASIDE ÄR STICKY */}
+      <aside className="w-[520px] shrink-0 sticky top-6 self-start space-y-4">
         <Card className="border shadow-none">
           <CardHeader>
             <CardTitle>Details</CardTitle>
@@ -397,7 +398,7 @@ export const ProfilePosts = () => {
                 {introLines.length > 0 && (
                   <ul className="text-sm text-black space-y-1">
                     {introLines.map((l) => (
-                      <li key={l}> {l}</li>
+                      <li key={l}>{l}</li>
                     ))}
                   </ul>
                 )}
