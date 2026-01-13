@@ -42,6 +42,13 @@ export const ProfileFriends = () => {
 
   const [view, setView] = useState<"friends" | "requests" | "find">("friends");
 
+  // ✅ Same “Edit Profile” feel
+  const cardStyle =
+    "w-full mx-auto max-w-[1600px] overflow-hidden gap-0 shadow-none border border-black/10 bg-white text-black rounded-xl";
+  const sectionInner = "rounded-xl border border-black/10 bg-black/[0.02] p-5";
+  const inputStyle =
+    "bg-white text-black border-black/10 placeholder:text-black/40";
+
   const loadAll = async () => {
     try {
       setIsLoading(true);
@@ -120,7 +127,6 @@ export const ProfileFriends = () => {
       }
       if (!res.ok) throw new Error("Send request failed");
 
-      // valfritt: markera i UI
       setSearchResults((prev) => prev.filter((u) => u._id !== toUserId));
     } catch (e) {
       console.error(e);
@@ -170,32 +176,36 @@ export const ProfileFriends = () => {
 
   return (
     <div>
-      <Card className="w-full mx-auto max-w-[1600px] overflow-hidden gap-0 border shadow-none">
+      <Card className={cardStyle}>
         <CardHeader>
-          <CardTitle>Friends</CardTitle>
+          <CardTitle className="text-black">Friends</CardTitle>
         </CardHeader>
 
         <CardContent className="flex flex-col gap-4">
-          <Input
-            className="p-2 rounded-md"
-            placeholder="Search friends"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-          />
+          <div className={sectionInner}>
+            <div className="space-y-4">
+              <Input
+                className={`p-2 rounded-md ${inputStyle}`}
+                placeholder="Search friends"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+              />
 
-          <div className="flex gap-4 flex-wrap">
-            <button className={buttons} onClick={() => setView("requests")}>
-              Friend requests ({requests.length})
-            </button>
-            <button className={buttons} onClick={() => setView("find")}>
-              Find friends
-            </button>
-            <button className={buttons} onClick={() => setView("friends")}>
-              Friends ({friends.length})
-            </button>
+              <div className="flex gap-4 flex-wrap">
+                <button className={buttons} onClick={() => setView("requests")}>
+                  Friend requests ({requests.length})
+                </button>
+                <button className={buttons} onClick={() => setView("find")}>
+                  Find friends
+                </button>
+                <button className={buttons} onClick={() => setView("friends")}>
+                  Friends ({friends.length})
+                </button>
+              </div>
+
+              {error && <p className="text-sm text-red-600">{error}</p>}
+            </div>
           </div>
-
-          {error && <p className="text-sm text-red-500">{error}</p>}
         </CardContent>
 
         <CardFooter />
@@ -203,43 +213,51 @@ export const ProfileFriends = () => {
 
       {/* REQUESTS */}
       {view === "requests" && (
-        <Card className="w-full mx-auto max-w-[1600px] overflow-hidden gap-0 border shadow-none mt-4">
+        <Card className={`${cardStyle} mt-6`}>
           <CardHeader>
-            <CardTitle>Friend requests</CardTitle>
+            <CardTitle className="text-black">Friend requests</CardTitle>
           </CardHeader>
-          <CardContent className="flex flex-col gap-3">
-            {isLoading && <p className="text-sm text-gray-400">Loading…</p>}
+          <CardContent>
+            <div className={sectionInner}>
+              <div className="flex flex-col gap-3">
+                {isLoading && <p className="text-sm text-black/60">Loading…</p>}
 
-            {!isLoading && requests.length === 0 && (
-              <p className="text-sm text-gray-400">No requests.</p>
-            )}
+                {!isLoading && requests.length === 0 && (
+                  <p className="text-sm text-black/60">No requests.</p>
+                )}
 
-            {requests.map((r) => (
-              <div
-                key={r._id}
-                className="flex items-center justify-between border-b border-white/10 pb-2 last:border-b-0"
-              >
-                <div>
-                  <p className="text-sm font-medium">{r.fromUser.name}</p>
-                  <p className="text-xs text-gray-400">{r.fromUser.email}</p>
-                </div>
-
-                <div className="flex gap-2">
-                  <button
-                    className={buttons}
-                    onClick={() => acceptRequest(r._id)}
+                {requests.map((r) => (
+                  <div
+                    key={r._id}
+                    className="flex items-center justify-between border-b border-black/10 pb-2 last:border-b-0"
                   >
-                    Accept
-                  </button>
-                  <button
-                    className={buttons}
-                    onClick={() => declineRequest(r._id)}
-                  >
-                    Decline
-                  </button>
-                </div>
+                    <div>
+                      <p className="text-sm font-medium text-black/80">
+                        {r.fromUser.name}
+                      </p>
+                      <p className="text-xs text-black/60">
+                        {r.fromUser.email}
+                      </p>
+                    </div>
+
+                    <div className="flex gap-2">
+                      <button
+                        className={buttons}
+                        onClick={() => acceptRequest(r._id)}
+                      >
+                        Accept
+                      </button>
+                      <button
+                        className={buttons}
+                        onClick={() => declineRequest(r._id)}
+                      >
+                        Decline
+                      </button>
+                    </div>
+                  </div>
+                ))}
               </div>
-            ))}
+            </div>
           </CardContent>
           <CardFooter />
         </Card>
@@ -247,46 +265,53 @@ export const ProfileFriends = () => {
 
       {/* FIND FRIENDS */}
       {view === "find" && (
-        <Card className="w-full mx-auto max-w-[1600px] overflow-hidden gap-0 border shadow-none mt-4">
+        <Card className={`${cardStyle} mt-6`}>
           <CardHeader>
-            <CardTitle>Find friends</CardTitle>
+            <CardTitle className="text-black">Find friends</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex gap-2">
-              <Input
-                placeholder="Search by name or email…"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && searchUsers()}
-              />
-              <button className={buttons} onClick={searchUsers}>
-                {isSearching ? "Searching..." : "Search"}
-              </button>
-            </div>
-
-            {searchResults.length === 0 && !isSearching && (
-              <p className="text-sm text-gray-400">No results.</p>
-            )}
-
-            <div className="space-y-2">
-              {searchResults.map((u) => (
-                <div
-                  key={u._id}
-                  className="flex items-center justify-between border-b border-white/10 pb-2 last:border-b-0"
-                >
-                  <div>
-                    <p className="text-sm font-medium">{u.name}</p>
-                    <p className="text-xs text-gray-400">{u.email}</p>
-                  </div>
-
-                  <button
-                    className={buttons}
-                    onClick={() => sendRequest(u._id)}
-                  >
-                    Add
+          <CardContent>
+            <div className={sectionInner}>
+              <div className="space-y-4">
+                <div className="flex gap-2">
+                  <Input
+                    className={inputStyle}
+                    placeholder="Search by name or email…"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onKeyDown={(e) => e.key === "Enter" && searchUsers()}
+                  />
+                  <button className={buttons} onClick={searchUsers}>
+                    {isSearching ? "Searching..." : "Search"}
                   </button>
                 </div>
-              ))}
+
+                {searchResults.length === 0 && !isSearching && (
+                  <p className="text-sm text-black/60">No results.</p>
+                )}
+
+                <div className="space-y-2">
+                  {searchResults.map((u) => (
+                    <div
+                      key={u._id}
+                      className="flex items-center justify-between border-b border-black/10 pb-2 last:border-b-0"
+                    >
+                      <div>
+                        <p className="text-sm font-medium text-black/80">
+                          {u.name}
+                        </p>
+                        <p className="text-xs text-black/60">{u.email}</p>
+                      </div>
+
+                      <button
+                        className={buttons}
+                        onClick={() => sendRequest(u._id)}
+                      >
+                        Add
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </CardContent>
           <CardFooter />
@@ -295,36 +320,44 @@ export const ProfileFriends = () => {
 
       {/* FRIENDS LIST */}
       {view === "friends" && (
-        <Card className="w-full mx-auto max-w-[1600px] overflow-hidden gap-0 border shadow-none mt-4">
+        <Card className={`${cardStyle} mt-6`}>
           <CardHeader>
-            <CardTitle>Friends ({filteredFriends.length})</CardTitle>
+            <CardTitle className="text-black">
+              Friends ({filteredFriends.length})
+            </CardTitle>
           </CardHeader>
-          <CardContent className="flex flex-col gap-4">
-            {isLoading && <p className="text-sm text-gray-400">Loading…</p>}
+          <CardContent>
+            <div className={sectionInner}>
+              <div className="flex flex-col gap-4">
+                {isLoading && <p className="text-sm text-black/60">Loading…</p>}
 
-            {!isLoading && filteredFriends.length === 0 && (
-              <p className="text-sm text-gray-400">No friends to display.</p>
-            )}
+                {!isLoading && filteredFriends.length === 0 && (
+                  <p className="text-sm text-black/60">
+                    No friends to display.
+                  </p>
+                )}
 
-            {filteredFriends.map((friend) => (
-              <div
-                key={friend._id}
-                className="flex justify-between items-center border-b border-white/10 pb-2 last:border-b-0"
-              >
-                <span>
-                  {friend.name}
-                  {friend.isOnline && (
-                    <span className="text-sm text-green-500 ml-2">
-                      ● Online
+                {filteredFriends.map((friend) => (
+                  <div
+                    key={friend._id}
+                    className="flex justify-between items-center border-b border-black/10 pb-2 last:border-b-0"
+                  >
+                    <span className="text-black/80">
+                      {friend.name}
+                      {friend.isOnline && (
+                        <span className="text-sm text-emerald-600 ml-2">
+                          ● Online
+                        </span>
+                      )}
                     </span>
-                  )}
-                </span>
 
-                <button className="text-sm text-emerald-400 hover:underline">
-                  Message
-                </button>
+                    <button className="text-sm text-emerald-600 hover:underline">
+                      Message
+                    </button>
+                  </div>
+                ))}
               </div>
-            ))}
+            </div>
           </CardContent>
           <CardFooter />
         </Card>

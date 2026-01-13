@@ -1,4 +1,3 @@
-// src/components/profile/ProfileAboutColumns.tsx
 import { useEffect, useMemo, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { buttons } from "../../Styles/button";
@@ -20,20 +19,26 @@ type Friend = {
 
 export const ProfileAboutColumns = () => {
   const [data, setData] = useState<ProfileColumns>({ about: [] });
-
   const [friends, setFriends] = useState<Friend[]>([]);
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [videos, setVideos] = useState<Video[]>([]);
-
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // 👉 Intro edit state
   const [isEditingBio, setIsEditingBio] = useState(false);
   const [bioDraft, setBioDraft] = useState("");
 
   const sidebarPhotos = useMemo(() => photos.slice(0, 6), [photos]);
   const sidebarVideos = useMemo(() => videos.slice(0, 4), [videos]);
+
+  // ✅ Same “Edit Profile” feel: light surface + subtle section background
+  const cardStyle =
+    "border border-black/10 bg-white text-black shadow-none rounded-xl";
+  const sectionInner = "rounded-xl border border-black/10 bg-black/[0.02] p-5";
+
+  useEffect(() => {
+    fetchAll();
+  }, []);
 
   const fetchAll = async () => {
     try {
@@ -69,10 +74,6 @@ export const ProfileAboutColumns = () => {
     }
   };
 
-  useEffect(() => {
-    fetchAll();
-  }, []);
-
   const saveBio = async () => {
     const next = { about: bioDraft.trim() ? [bioDraft.trim()] : [] };
     setData(next);
@@ -95,127 +96,146 @@ export const ProfileAboutColumns = () => {
   const currentBio = data.about[0] ?? "";
 
   return (
-    <div className="space-y-4">
-      {error && <p className="text-sm text-red-500">{error}</p>}
-      {isLoading && <p className="text-sm text-gray-400">Loading…</p>}
+    <div className="space-y-8 mt-20">
+      {error && <p className="text-sm text-red-600">{error}</p>}
+      {isLoading && <p className="text-sm text-black/60">Loading…</p>}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+      {/* GRID */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
         {/* Intro / Bio */}
-        <Card className="border shadow-none">
+        <Card className={cardStyle}>
           <CardHeader>
-            <CardTitle>Intro</CardTitle>
+            <CardTitle className="text-black">Intro</CardTitle>
           </CardHeader>
 
-          <CardContent className="space-y-3">
-            {!isEditingBio && (
-              <>
-                {currentBio ? (
-                  <p className="text-sm whitespace-pre-line">{currentBio}</p>
-                ) : (
-                  <p className="text-sm text-gray-400">No bio added yet.</p>
+          <CardContent>
+            <div className={sectionInner}>
+              <div className="space-y-4">
+                {!isEditingBio && (
+                  <>
+                    {currentBio ? (
+                      <p className="text-sm whitespace-pre-line leading-relaxed text-black/80">
+                        {currentBio}
+                      </p>
+                    ) : (
+                      <p className="text-sm text-black/60">No bio added yet.</p>
+                    )}
+
+                    <button
+                      className={buttons}
+                      onClick={() => {
+                        setBioDraft(currentBio);
+                        setIsEditingBio(true);
+                      }}
+                    >
+                      {currentBio ? "Edit bio" : "Add bio"}
+                    </button>
+                  </>
                 )}
 
-                <button
-                  className={buttons}
-                  onClick={() => {
-                    setBioDraft(currentBio);
-                    setIsEditingBio(true);
-                  }}
-                >
-                  {currentBio ? "Edit bio" : "Add bio"}
-                </button>
-              </>
-            )}
+                {isEditingBio && (
+                  <div className="space-y-4">
+                    <textarea
+                      className="w-full min-h-[140px] rounded-md border border-black/10 bg-white p-3 text-sm text-black outline-none focus:border-black/25 placeholder:text-black/40"
+                      placeholder="Write something about yourself…"
+                      value={bioDraft}
+                      onChange={(e) => setBioDraft(e.target.value)}
+                    />
 
-            {isEditingBio && (
-              <div className="space-y-3">
-                <textarea
-                  className="w-full min-h-[120px] rounded-md border border-white/10 bg-transparent p-3 text-sm outline-none focus:border-white/30"
-                  placeholder="Write something about yourself…"
-                  value={bioDraft}
-                  onChange={(e) => setBioDraft(e.target.value)}
-                />
-
-                <div className="flex gap-2">
-                  <button className={buttons} onClick={saveBio}>
-                    Save
-                  </button>
-                  <button
-                    className="px-4 py-2 text-sm text-gray-400 hover:underline"
-                    onClick={() => {
-                      setBioDraft(currentBio);
-                      setIsEditingBio(false);
-                    }}
-                  >
-                    Cancel
-                  </button>
-                </div>
+                    <div className="flex gap-3">
+                      <button className={buttons} onClick={saveBio}>
+                        Save
+                      </button>
+                      <button
+                        className="text-sm text-black/60 hover:underline"
+                        onClick={() => {
+                          setBioDraft(currentBio);
+                          setIsEditingBio(false);
+                        }}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
-            )}
+            </div>
           </CardContent>
         </Card>
 
         {/* Friends */}
-        <Card className="border shadow-none">
+        <Card className={cardStyle}>
           <CardHeader>
-            <CardTitle>Friends</CardTitle>
+            <CardTitle className="text-black">Friends</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-2">
-            {friends.length === 0 ? (
-              <p className="text-sm text-gray-400">No friends yet.</p>
-            ) : (
-              friends.slice(0, 8).map((f) => (
-                <div
-                  key={f._id}
-                  className="flex items-center justify-between border-b border-white/10 pb-2 last:border-b-0"
-                >
-                  <span className="text-sm">{f.name}</span>
-                  <span className="text-xs text-gray-400">{f.email}</span>
-                </div>
-              ))
-            )}
+          <CardContent>
+            <div className={sectionInner}>
+              <div className="space-y-3">
+                {friends.length === 0 ? (
+                  <p className="text-sm text-black/60">No friends yet.</p>
+                ) : (
+                  friends.slice(0, 8).map((f) => (
+                    <div
+                      key={f._id}
+                      className="flex items-center justify-between border-b border-black/10 pb-2 last:border-b-0"
+                    >
+                      <span className="text-sm text-black/80">{f.name}</span>
+                      <span className="text-xs text-black/60">{f.email}</span>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
           </CardContent>
         </Card>
 
         {/* Photos */}
-        <Card className="border shadow-none">
+        <Card className={cardStyle}>
           <CardHeader>
-            <CardTitle>Photos</CardTitle>
+            <CardTitle className="text-black">Photos</CardTitle>
           </CardHeader>
-          <CardContent className="grid grid-cols-3 gap-2">
-            {sidebarPhotos.length === 0 ? (
-              <p className="text-sm text-gray-400 col-span-3">No photos.</p>
-            ) : (
-              sidebarPhotos.map((p) => (
-                <img
-                  key={p._id}
-                  src={`${API_BASE}/photos/${p._id}/file`}
-                  alt={p.caption || "Photo"}
-                  className="h-20 w-full object-cover rounded border border-white/10"
-                />
-              ))
-            )}
+          <CardContent>
+            <div className={sectionInner}>
+              <div className="grid grid-cols-3 gap-3">
+                {sidebarPhotos.length === 0 ? (
+                  <p className="text-sm text-black/60 col-span-3">No photos.</p>
+                ) : (
+                  sidebarPhotos.map((p) => (
+                    <img
+                      key={p._id}
+                      src={`${API_BASE}/photos/${p._id}/file`}
+                      alt={p.caption || "Photo"}
+                      className="h-24 w-full object-cover rounded-md border border-black/10"
+                    />
+                  ))
+                )}
+              </div>
+            </div>
           </CardContent>
         </Card>
 
         {/* Videos */}
-        <Card className="border shadow-none">
+        <Card className={cardStyle}>
           <CardHeader>
-            <CardTitle>Videos</CardTitle>
+            <CardTitle className="text-black">Videos</CardTitle>
           </CardHeader>
-          <CardContent className="grid grid-cols-2 gap-2">
-            {sidebarVideos.length === 0 ? (
-              <p className="text-sm text-gray-400 col-span-2">No videos.</p>
-            ) : (
-              sidebarVideos.map((v) => (
-                <video
-                  key={v._id}
-                  src={`${API_BASE}/videos/${v._id}/file`}
-                  className="h-24 w-full object-cover rounded border border-white/10"
-                  muted
-                />
-              ))
-            )}
+          <CardContent>
+            <div className={sectionInner}>
+              <div className="grid grid-cols-2 gap-3">
+                {sidebarVideos.length === 0 ? (
+                  <p className="text-sm text-black/60 col-span-2">No videos.</p>
+                ) : (
+                  sidebarVideos.map((v) => (
+                    <video
+                      key={v._id}
+                      src={`${API_BASE}/videos/${v._id}/file`}
+                      muted
+                      className="h-28 w-full object-cover rounded-md border border-black/10"
+                    />
+                  ))
+                )}
+              </div>
+            </div>
           </CardContent>
         </Card>
       </div>

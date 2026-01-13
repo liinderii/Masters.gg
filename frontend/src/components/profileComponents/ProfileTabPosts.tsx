@@ -9,6 +9,13 @@ import {
 } from "../ui/card";
 import { Input } from "../ui/input";
 
+import { House } from "lucide-react";
+import { MapPin } from "lucide-react";
+import { Heart } from "lucide-react";
+import { ThumbsUp } from "lucide-react";
+import { MessageCircleMore } from "lucide-react";
+import { Share } from "lucide-react";
+
 import type { Post, PostAttachment } from "../../types/post";
 import type { Photo } from "../../types/photo";
 import type { Video } from "../../types/video";
@@ -75,6 +82,11 @@ type PostUIState = {
   commentDraft: string;
 };
 
+type IntroLine = {
+  key: "livesIn" | "from" | "relationshipStatus";
+  text: string;
+};
+
 export const ProfilePosts = () => {
   const [profileMe, setProfileMe] = useState<ProfileMe | null>(null);
 
@@ -82,16 +94,12 @@ export const ProfilePosts = () => {
   const [newPost, setNewPost] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [isPhotosLoading, setIsPhotosLoading] = useState(true);
-
   const [error, setError] = useState<string | null>(null);
-
   const [attachments, setAttachments] = useState<PostAttachment[]>([]);
   const [isUploadingMedia, setIsUploadingMedia] = useState(false);
   const mediaInputRef = useRef<HTMLInputElement | null>(null);
-
   const [postUI, setPostUI] = useState<Record<string, PostUIState>>({});
 
   useEffect(() => {
@@ -155,7 +163,6 @@ export const ProfilePosts = () => {
       }
     }
 
-    // Lyssna på uppdateringar från ProfileHeader (utan Context)
     const onUpdated = (ev: Event) => {
       const detail = (ev as CustomEvent).detail as ProfileMe | undefined;
       if (!detail) return;
@@ -365,327 +372,360 @@ export const ProfilePosts = () => {
     }
   };
 
-  const introLines = useMemo(() => {
+  const introLines = useMemo((): IntroLine[] => {
     const i = profileMe?.intro;
     if (!i) return [];
-    const lines: string[] = [];
-    if (i.livesIn?.trim()) lines.push(`Lives in ${i.livesIn.trim()}`);
-    if (i.from?.trim()) lines.push(`From ${i.from.trim()}`);
-    if (i.relationshipStatus?.trim()) lines.push(i.relationshipStatus.trim());
+
+    const lines: IntroLine[] = [];
+
+    const livesIn = i.livesIn?.trim();
+    const from = i.from?.trim();
+    const relationshipStatus = i.relationshipStatus?.trim();
+
+    if (livesIn) lines.push({ key: "livesIn", text: `Lives in ${livesIn}` });
+    if (from) lines.push({ key: "from", text: `From ${from}` });
+    if (relationshipStatus)
+      lines.push({ key: "relationshipStatus", text: relationshipStatus });
+
     return lines;
   }, [profileMe?.intro]);
 
+  const introIcon = (key: IntroLine["key"]) => {
+    const cls = "h-4 w-4 text-black/70";
+    if (key === "livesIn") return <MapPin className={cls} />;
+    if (key === "from") return <House className={cls} />;
+    return <Heart className={cls} />;
+  };
+
+  // ===== Styles för: grå page + vita cards =====
+  const pageBg = "bg-gray-100"; // din grå
+  const cardBase = "bg-white border border-black/10 shadow-none"; // vita rutor
+  const subtleBorder = "border border-black/10";
+
   return (
-    <div className="mt-16 flex gap-10 items-start">
-      {/* ✅ HELA ASIDE ÄR STICKY */}
-      <aside className="w-[520px] shrink-0 sticky top-6 self-start space-y-4">
-        <Card className="border shadow-none">
-          <CardHeader>
-            <CardTitle>Details</CardTitle>
-          </CardHeader>
+    // Wrapper som faktiskt täcker hela ytan under tabsen
+    <section className={`w-full ${pageBg}`}>
+      <div className="mx-auto max-w-[1600px] px-4 py-10">
+        <div className="flex gap-10 items-start">
+          <aside className="w-[520px] shrink-0 sticky top-6 self-start space-y-4">
+            <Card className={cardBase}>
+              <CardHeader>
+                <CardTitle>Details</CardTitle>
+              </CardHeader>
 
-          <CardContent className="text-sm text-black space-y-3">
-            <p>Share updates, photos, and videos with your followers.</p>
+              <CardContent className="text-sm text-black space-y-3">
+                <p>Share updates, photos, and videos with your followers.</p>
 
-            {(profileMe?.bio?.trim() || introLines.length > 0) && (
-              <div className="rounded-xl border border-white/10 bg-black/20 p-4 space-y-2">
-                {profileMe?.bio?.trim() && (
-                  <p className="text-sm text-gray-200">
-                    {profileMe.bio.trim()}
-                  </p>
-                )}
-
-                {introLines.length > 0 && (
-                  <ul className="text-sm text-black space-y-1">
-                    {introLines.map((l) => (
-                      <li key={l}>{l}</li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        <Card className="border shadow-none">
-          <CardHeader>
-            <CardTitle>Photos</CardTitle>
-          </CardHeader>
-
-          <CardContent className="grid grid-cols-3 gap-2">
-            {isPhotosLoading && (
-              <p className="col-span-3 text-sm text-gray-400">Loading…</p>
-            )}
-
-            {!isPhotosLoading && sidebarPhotos.length === 0 && (
-              <p className="col-span-3 text-sm text-gray-400">No photos yet</p>
-            )}
-
-            {sidebarPhotos.map((photo) => (
-              <PhotoActionsDialog
-                key={photo._id}
-                photo={photo}
-                onSetProfile={async () => {}}
-                onSetCover={async () => {}}
-                onDelete={async () => {}}
-              />
-            ))}
-          </CardContent>
-
-          <CardFooter />
-        </Card>
-      </aside>
-
-      <main className="flex-1 space-y-4">
-        <Card className="border shadow-none">
-          <CardHeader>
-            <CardTitle>Create Post</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Input
-              placeholder="What's on your mind?"
-              value={newPost}
-              onChange={(e) => setNewPost(e.target.value)}
-            />
-
-            {attachments.length > 0 && (
-              <div className="mt-4 grid grid-cols-4 gap-2">
-                {attachments.map((a, i) => {
-                  const src =
-                    a.kind === "photo"
-                      ? `${API_BASE}/photos/${a.refId}/file`
-                      : `${API_BASE}/videos/${a.refId}/file`;
-
-                  return (
-                    <button
-                      key={`${a.kind}-${a.refId}-${i}`}
-                      type="button"
-                      onClick={() => removeAttachment(i)}
-                      className="relative overflow-hidden rounded border border-white/10"
-                      title="Remove attachment"
-                    >
-                      {a.kind === "photo" ? (
-                        <img
-                          src={src}
-                          alt="attachment"
-                          className="h-24 w-full object-cover"
-                        />
-                      ) : (
-                        <video
-                          src={src}
-                          className="h-24 w-full object-cover"
-                          muted
-                          playsInline
-                          preload="metadata"
-                        />
-                      )}
-
-                      <span className="absolute bottom-0 w-full bg-black/60 p-1 text-xs">
-                        Remove
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-            )}
-
-            <div className="mt-4 flex gap-4">
-              <button
-                className={buttons}
-                type="button"
-                onClick={handlePickMedia}
-                disabled={isUploadingMedia}
-              >
-                {isUploadingMedia ? "Uploading..." : "Photo / Video"}
-              </button>
-
-              <input
-                ref={mediaInputRef}
-                type="file"
-                accept="image/*,video/*"
-                className="hidden"
-                onChange={(e) => {
-                  const f = e.target.files?.[0];
-                  if (f) uploadMedia(f);
-                  e.currentTarget.value = "";
-                }}
-              />
-
-              <button
-                className={buttons}
-                onClick={handleAddPost}
-                disabled={
-                  isSaving || (!newPost.trim() && attachments.length === 0)
-                }
-              >
-                {isSaving ? "Posting..." : "Post"}
-              </button>
-            </div>
-
-            {error && <p className="mt-2 text-sm text-red-500">{error}</p>}
-          </CardContent>
-          <CardFooter />
-        </Card>
-
-        <div className="space-y-4">
-          {isLoading && <p className="text-sm text-gray-400">Loading…</p>}
-
-          {!isLoading && posts.length === 0 && !error && (
-            <p className="text-sm text-gray-400">No posts yet.</p>
-          )}
-
-          {posts.map((post) => {
-            const name = displayNameFromPost(post);
-            const ui = postUI[post._id] ?? {
-              liked: false,
-              likeCount: 0,
-              comments: [],
-              commentDraft: "",
-            };
-
-            return (
-              <Card key={post._id} className="border shadow-none">
-                <CardHeader className="flex flex-row items-start justify-between gap-4">
-                  <div className="min-w-0">
-                    <CardTitle className="text-base font-semibold leading-tight">
-                      {name}
-                    </CardTitle>
-                    <p className="mt-1 text-xs text-gray-400">
-                      {formatDate(post.createdAt)}
-                    </p>
-                  </div>
-
-                  <button
-                    type="button"
-                    className="text-xs text-red-400 hover:underline shrink-0"
-                    onClick={() => deletePost(post._id)}
-                  >
-                    Delete
-                  </button>
-                </CardHeader>
-
-                <CardContent>
-                  <div className="flex flex-col items-center text-center">
-                    {post.content && (
-                      <p className="max-w-[70ch] text-lg leading-relaxed">
-                        {post.content}
+                {(profileMe?.bio?.trim() || introLines.length > 0) && (
+                  <div className={`rounded-xl ${subtleBorder} p-4 space-y-2`}>
+                    {profileMe?.bio?.trim() && (
+                      <p className="text-sm text-black/70">
+                        {profileMe.bio.trim()}
                       </p>
                     )}
 
-                    {post.attachments?.length ? (
-                      <div className="mt-4 w-full max-w-3xl space-y-3">
-                        {post.attachments.map((a, i) => {
-                          const src =
-                            a.kind === "photo"
-                              ? `${API_BASE}/photos/${a.refId}/file`
-                              : `${API_BASE}/videos/${a.refId}/file`;
+                    {introLines.length > 0 && (
+                      <ul className="text-sm text-black space-y-2">
+                        {introLines.map((l) => (
+                          <li
+                            key={`${l.key}-${l.text}`}
+                            className="flex items-center gap-2"
+                          >
+                            {introIcon(l.key)}
+                            <span>{l.text}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
 
-                          return a.kind === "photo" ? (
+            <Card className={cardBase}>
+              <CardHeader>
+                <CardTitle>Photos</CardTitle>
+              </CardHeader>
+
+              <CardContent className="grid grid-cols-3 gap-2">
+                {isPhotosLoading && (
+                  <p className="col-span-3 text-sm text-black/60">Loading…</p>
+                )}
+
+                {!isPhotosLoading && sidebarPhotos.length === 0 && (
+                  <p className="col-span-3 text-sm text-black/60">
+                    No photos yet
+                  </p>
+                )}
+
+                {sidebarPhotos.map((photo) => (
+                  <PhotoActionsDialog
+                    key={photo._id}
+                    photo={photo}
+                    onSetProfile={async () => {}}
+                    onSetCover={async () => {}}
+                    onDelete={async () => {}}
+                  />
+                ))}
+              </CardContent>
+
+              <CardFooter />
+            </Card>
+          </aside>
+
+          <main className="flex-1 space-y-4">
+            <Card className={cardBase}>
+              <CardHeader>
+                <CardTitle>Create Post</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Input
+                  placeholder="What's on your mind?"
+                  value={newPost}
+                  onChange={(e) => setNewPost(e.target.value)}
+                />
+
+                {attachments.length > 0 && (
+                  <div className="mt-4 grid grid-cols-4 gap-2">
+                    {attachments.map((a, i) => {
+                      const src =
+                        a.kind === "photo"
+                          ? `${API_BASE}/photos/${a.refId}/file`
+                          : `${API_BASE}/videos/${a.refId}/file`;
+
+                      return (
+                        <button
+                          key={`${a.kind}-${a.refId}-${i}`}
+                          type="button"
+                          onClick={() => removeAttachment(i)}
+                          className={`relative overflow-hidden rounded ${subtleBorder}`}
+                          title="Remove attachment"
+                        >
+                          {a.kind === "photo" ? (
                             <img
-                              key={`${a.kind}-${a.refId}-${i}`}
                               src={src}
-                              alt="post attachment"
-                              className="w-full rounded-xl border border-white/10 object-contain bg-black/20"
+                              alt="attachment"
+                              className="h-24 w-full object-cover"
                             />
                           ) : (
                             <video
-                              key={`${a.kind}-${a.refId}-${i}`}
                               src={src}
-                              controls
-                              className="w-full rounded-xl border border-white/10 bg-black/20"
+                              className="h-24 w-full object-cover"
+                              muted
+                              playsInline
+                              preload="metadata"
                             />
-                          );
-                        })}
+                          )}
+
+                          <span className="absolute bottom-0 w-full bg-black/60 p-1 text-xs text-white">
+                            Remove
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+
+                <div className="mt-4 flex gap-4">
+                  <button
+                    className={buttons}
+                    type="button"
+                    onClick={handlePickMedia}
+                    disabled={isUploadingMedia}
+                  >
+                    {isUploadingMedia ? "Uploading..." : "Photo / Video"}
+                  </button>
+
+                  <input
+                    ref={mediaInputRef}
+                    type="file"
+                    accept="image/*,video/*"
+                    className="hidden"
+                    onChange={(e) => {
+                      const f = e.target.files?.[0];
+                      if (f) uploadMedia(f);
+                      e.currentTarget.value = "";
+                    }}
+                  />
+
+                  <button
+                    className={buttons}
+                    onClick={handleAddPost}
+                    disabled={
+                      isSaving || (!newPost.trim() && attachments.length === 0)
+                    }
+                  >
+                    {isSaving ? "Posting..." : "Post"}
+                  </button>
+                </div>
+
+                {error && <p className="mt-2 text-sm text-red-500">{error}</p>}
+              </CardContent>
+              <CardFooter />
+            </Card>
+
+            <div className="space-y-4">
+              {isLoading && <p className="text-sm text-black/60">Loading…</p>}
+
+              {!isLoading && posts.length === 0 && !error && (
+                <p className="text-sm text-black/60">No posts yet.</p>
+              )}
+
+              {posts.map((post) => {
+                const name = displayNameFromPost(post);
+                const ui = postUI[post._id] ?? {
+                  liked: false,
+                  likeCount: 0,
+                  comments: [],
+                  commentDraft: "",
+                };
+
+                return (
+                  <Card key={post._id} className={cardBase}>
+                    <CardHeader className="flex flex-row items-start justify-between gap-4">
+                      <div className="min-w-0">
+                        <CardTitle className="text-base font-semibold leading-tight">
+                          {name}
+                        </CardTitle>
+                        <p className="mt-1 text-xs text-black/50">
+                          {formatDate(post.createdAt)}
+                        </p>
                       </div>
-                    ) : null}
-                  </div>
-                </CardContent>
-
-                <CardFooter className="flex flex-col gap-3 border-t border-white/10 pt-3">
-                  <div className="flex items-center justify-center gap-4 text-sm text-gray-300">
-                    <button
-                      type="button"
-                      onClick={() => toggleLike(post._id)}
-                      className={`flex items-center gap-1 hover:text-white transition ${
-                        ui.liked ? "text-white" : ""
-                      }`}
-                    >
-                      👍
-                      <span>Like</span>
-                      {ui.likeCount > 0 && (
-                        <span className="text-xs text-gray-400">
-                          ({ui.likeCount})
-                        </span>
-                      )}
-                    </button>
-
-                    <button
-                      type="button"
-                      className="flex items-center gap-1 hover:text-white transition"
-                    >
-                      💬
-                      <span>Comment</span>
-                      {ui.comments.length > 0 && (
-                        <span className="text-xs text-gray-400">
-                          ({ui.comments.length})
-                        </span>
-                      )}
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => sharePost(post._id)}
-                      className="flex items-center gap-1 hover:text-white transition"
-                    >
-                      🔗
-                      <span>Share</span>
-                    </button>
-                  </div>
-
-                  <div className="w-full max-w-xl mx-auto">
-                    <div className="flex gap-2">
-                      <Input
-                        placeholder="Write a comment…"
-                        value={ui.commentDraft}
-                        onChange={(e) =>
-                          setCommentDraft(post._id, e.target.value)
-                        }
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") addComment(post._id);
-                        }}
-                      />
 
                       <button
                         type="button"
-                        className="px-4 py-2 text-sm rounded-md border border-white/10 hover:bg-white/10 transition"
-                        onClick={() => addComment(post._id)}
+                        className="text-xs text-red-500 hover:underline shrink-0"
+                        onClick={() => deletePost(post._id)}
                       >
-                        Send
+                        Delete
                       </button>
-                    </div>
+                    </CardHeader>
 
-                    {ui.comments.length > 0 && (
-                      <div className="mt-3 space-y-2">
-                        {ui.comments.map((c) => (
-                          <div
-                            key={c.id}
-                            className="rounded-lg border border-white/10 bg-black/20 px-3 py-2"
-                          >
-                            <p className="text-sm">{c.text}</p>
-                            <p className="mt-1 text-xs text-gray-400">
-                              {formatDate(c.createdAt)}
-                            </p>
+                    <CardContent>
+                      <div className="flex flex-col items-center text-center">
+                        {post.content && (
+                          <p className="max-w-[70ch] text-lg leading-relaxed">
+                            {post.content}
+                          </p>
+                        )}
+
+                        {post.attachments?.length ? (
+                          <div className="mt-4 w-full max-w-3xl space-y-3">
+                            {post.attachments.map((a, i) => {
+                              const src =
+                                a.kind === "photo"
+                                  ? `${API_BASE}/photos/${a.refId}/file`
+                                  : `${API_BASE}/videos/${a.refId}/file`;
+
+                              return a.kind === "photo" ? (
+                                <img
+                                  key={`${a.kind}-${a.refId}-${i}`}
+                                  src={src}
+                                  alt="post attachment"
+                                  className={`w-full rounded-xl ${subtleBorder} object-contain bg-white`}
+                                />
+                              ) : (
+                                <video
+                                  key={`${a.kind}-${a.refId}-${i}`}
+                                  src={src}
+                                  controls
+                                  className={`w-full rounded-xl ${subtleBorder} bg-white`}
+                                />
+                              );
+                            })}
                           </div>
-                        ))}
+                        ) : null}
                       </div>
-                    )}
-                  </div>
-                </CardFooter>
-              </Card>
-            );
-          })}
+                    </CardContent>
+
+                    <CardFooter className="flex flex-col gap-3 border-t border-black/10 pt-3">
+                      <div className="flex items-center justify-center gap-6 text-sm text-black/70">
+                        <button
+                          type="button"
+                          onClick={() => toggleLike(post._id)}
+                          className={`flex items-center gap-2 hover:text-black transition ${
+                            ui.liked ? "text-black" : ""
+                          }`}
+                        >
+                          <ThumbsUp className="h-4 w-4" />
+                          <span>Like</span>
+                          {ui.likeCount > 0 && (
+                            <span className="text-xs text-black/50">
+                              ({ui.likeCount})
+                            </span>
+                          )}
+                        </button>
+
+                        <button
+                          type="button"
+                          className="flex items-center gap-2 hover:text-black transition"
+                        >
+                          <MessageCircleMore className="h-4 w-4" />
+                          <span>Comment</span>
+                          {ui.comments.length > 0 && (
+                            <span className="text-xs text-black/50">
+                              ({ui.comments.length})
+                            </span>
+                          )}
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => sharePost(post._id)}
+                          className="flex items-center gap-2 hover:text-black transition"
+                        >
+                          <Share className="h-4 w-4" />
+                          <span>Share</span>
+                        </button>
+                      </div>
+
+                      <div className="w-full max-w-xl mx-auto">
+                        <div className="flex gap-2">
+                          <Input
+                            placeholder="Write a comment…"
+                            value={ui.commentDraft}
+                            onChange={(e) =>
+                              setCommentDraft(post._id, e.target.value)
+                            }
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") addComment(post._id);
+                            }}
+                            className="bg-white border-black/10"
+                          />
+
+                          <button
+                            type="button"
+                            className="px-4 py-2 text-sm rounded-md border border-black/10 hover:bg-black/[0.03] transition"
+                            onClick={() => addComment(post._id)}
+                          >
+                            Send
+                          </button>
+                        </div>
+
+                        {ui.comments.length > 0 && (
+                          <div className="mt-3 space-y-2">
+                            {ui.comments.map((c) => (
+                              <div
+                                key={c.id}
+                                className={`rounded-lg ${subtleBorder} bg-white px-3 py-2`}
+                              >
+                                <p className="text-sm">{c.text}</p>
+                                <p className="mt-1 text-xs text-black/50">
+                                  {formatDate(c.createdAt)}
+                                </p>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </CardFooter>
+                  </Card>
+                );
+              })}
+            </div>
+          </main>
         </div>
-      </main>
-    </div>
+      </div>
+    </section>
   );
 };
