@@ -138,80 +138,96 @@ export const ProfilePhotos = () => {
     }
   };
 
+  const pageBg = "bg-gray-100";
+  const cardBase = "bg-white border border-black/10 shadow-none rounded-xl";
+  const sectionInner = "rounded-xl border border-black/10 bg-black/[0.02] p-5";
+
   return (
-    <div className="space-y-6">
-      <Card className="w-full mx-auto max-w-[1600px] overflow-hidden border shadow-none">
-        <CardHeader>
-          <CardTitle>Photos</CardTitle>
-        </CardHeader>
+    <section className={`w-full ${pageBg}`}>
+      <div className="mx-auto max-w-[1600px] px-4 py-10 space-y-6">
+        <Card className={cardBase}>
+          <CardHeader>
+            <CardTitle>Photos</CardTitle>
+          </CardHeader>
 
-        <CardContent className="flex gap-4 flex-wrap">
-          <button className="px-3 py-2 bg-emerald-500 text-white rounded-md border border-white/20">
-            Photos of you (0)
-          </button>
+          <CardContent>
+            <div className={sectionInner}>
+              <div className="flex gap-4 flex-wrap">
+                <button className="px-3 py-2 bg-emerald-500 text-white rounded-md border border-white/20">
+                  Photos of you (0)
+                </button>
 
-          <button className="px-3 py-2 bg-emerald-500 text-white rounded-md border border-white/20">
-            Your photos ({yourPhotos.length})
-          </button>
+                <button className="px-3 py-2 bg-emerald-500 text-white rounded-md border border-white/20">
+                  Your photos ({yourPhotos.length})
+                </button>
 
-          <button className="px-3 py-2 bg-emerald-500 text-white rounded-md border border-white/20">
-            Albums (0)
-          </button>
+                <button className="px-3 py-2 bg-emerald-500 text-white rounded-md border border-white/20">
+                  Albums (0)
+                </button>
 
-          <button
-            type="button"
-            className="px-3 py-2 bg-emerald-500 text-white rounded-md hover:opacity-90 disabled:opacity-60"
-            onClick={handlePickFile}
-            disabled={isUploading}
-          >
-            {isUploading ? "Uploading..." : "Add photos / video"}
-          </button>
+                <button
+                  type="button"
+                  className="px-3 py-2 bg-emerald-500 text-white rounded-md hover:opacity-90 disabled:opacity-60"
+                  onClick={handlePickFile}
+                  disabled={isUploading}
+                >
+                  {isUploading ? "Uploading..." : "Add photos / video"}
+                </button>
 
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            className="hidden"
-            onChange={(e) => {
-              const f = e.target.files?.[0];
-              if (f) handleUpload(f);
-              e.currentTarget.value = "";
-            }}
-          />
-        </CardContent>
-      </Card>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => {
+                    const f = e.target.files?.[0];
+                    if (f) handleUpload(f);
+                    e.currentTarget.value = "";
+                  }}
+                />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
-      <Card className="w-full mx-auto max-w-[1600px] overflow-hidden border shadow-none">
-        <CardHeader>
-          <CardTitle>Your photos</CardTitle>
-        </CardHeader>
+        <Card className={cardBase}>
+          <CardHeader>
+            <CardTitle>Your photos</CardTitle>
+          </CardHeader>
 
-        <CardContent className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {error && (
-            <p className="text-sm text-red-500 col-span-full">{error}</p>
-          )}
+          <CardContent>
+            <div className={sectionInner}>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {error && (
+                  <p className="text-sm text-red-500 col-span-full">{error}</p>
+                )}
 
-          {isLoading && (
-            <p className="text-sm text-gray-400 col-span-full">Loading…</p>
-          )}
+                {isLoading && (
+                  <p className="text-sm text-black/60 col-span-full">
+                    Loading…
+                  </p>
+                )}
 
-          {!isLoading && yourPhotos.length === 0 && !error && (
-            <p className="text-sm text-gray-400 col-span-full">
-              No uploads yet
-            </p>
-          )}
+                {!isLoading && yourPhotos.length === 0 && !error && (
+                  <p className="text-sm text-black/60 col-span-full">
+                    No uploads yet
+                  </p>
+                )}
 
-          {yourPhotos.map((photo) => (
-            <PhotoActionsDialog
-              key={photo._id}
-              photo={photo}
-              onSetProfile={setAsProfile}
-              onSetCover={setAsCover}
-              onDelete={deletePhoto}
-            />
-          ))}
-        </CardContent>
-      </Card>
-    </div>
+                {yourPhotos.map((photo) => (
+                  <PhotoActionsDialog
+                    key={photo._id}
+                    photo={photo}
+                    onSetProfile={setAsProfile}
+                    onSetCover={setAsCover}
+                    onDelete={deletePhoto}
+                  />
+                ))}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </section>
   );
 };

@@ -1,3 +1,4 @@
+import { useMemo, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -5,84 +6,70 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
-import { Button } from "../ui/button";
 import type { Video } from "../../types/video";
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:3000";
+const videoFileUrl = (id: string) => `${API_BASE}/videos/${id}/file`;
 
 type Props = {
   video: Video;
-  onDelete: (id: string) => Promise<void>;
+  onDelete: (videoId: string) => Promise<void> | void;
 };
 
-export function VideoActionsDialog({ video, onDelete }: Props) {
-  const src = `${API_BASE}/videos/${video._id}/file`;
+export const VideoActionsDialog = ({ video, onDelete }: Props) => {
+  const [open, setOpen] = useState(false);
+
+  const src = useMemo(() => videoFileUrl(video._id), [video._id]);
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <button type="button" className="w-full text-left">
-          <div className="relative w-full h-48 rounded border border-white/10 overflow-hidden hover:opacity-90 transition">
-            <video
-              className="w-full h-full object-cover"
-              src={src}
-              preload="metadata"
-              muted
-              playsInline
-            />
+        {/* Thumbnail-kort: INGEN text-overlay */}
+        <button
+          type="button"
+          className="relative overflow-hidden rounded-xl border border-black/10 bg-white shadow-none w-full text-left"
+          title="Open video"
+        >
+          <video
+            src={src}
+            className="h-40 w-full object-cover"
+            muted
+            playsInline
+            preload="metadata"
+          />
 
-            <div className="absolute inset-x-0 bottom-0 p-2 bg-black/55">
-              <p className="text-sm font-medium truncate">
-                {video.title || "Untitled video"}
-              </p>
-              <p className="text-[11px] text-gray-200/80 truncate">
-                {video.game || "No game"} •{" "}
-                {video.createdAt
-                  ? new Date(video.createdAt).toLocaleDateString()
-                  : ""}
-              </p>
-            </div>
-
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="px-3 py-1 rounded-full bg-black/55 border border-white/15 text-xs">
-                Play
-              </div>
-            </div>
-          </div>
+          {/* Valfri: subtil hover-overlay utan text */}
+          <div className="pointer-events-none absolute inset-0 opacity-0 hover:opacity-100 transition bg-black/5" />
         </button>
       </DialogTrigger>
 
-      <DialogContent className="max-w-3xl bg-gray-900">
+      <DialogContent className="max-w-4xl bg-white text-black">
         <DialogHeader>
-          <DialogTitle>{video.title || "Video"}</DialogTitle>
+          {/* Om du inte vill ha titel här heller: kan tas bort helt */}
+          <DialogTitle className="text-black">
+            {video.title?.trim() ? video.title : "Video"}
+          </DialogTitle>
         </DialogHeader>
 
-        <div className="rounded overflow-hidden border border-white/10">
-          <video
-            src={src}
-            controls
-            autoPlay
-            className="w-full max-h-[55vh] bg-black/20"
-          />
-        </div>
+        <div className="space-y-4">
+          <div className="rounded-xl overflow-hidden border border-black/10 bg-black">
+            <video src={src} controls className="w-full max-h-[70vh]" />
+          </div>
 
-        <div className="grid grid-cols-3 gap-2 pt-4">
-          <Button type="button" variant="secondary" className="w-full" disabled>
-            Profile
-          </Button>
-          <Button type="button" variant="secondary" className="w-full" disabled>
-            Cover
-          </Button>
-          <Button
-            type="button"
-            variant="destructive"
-            className="w-full"
-            onClick={() => onDelete(video._id)}
-          >
-            Delete
-          </Button>
+          <div className="flex justify-end">
+            <button
+              type="button"
+              onClick={async () => {
+                await onDelete(video._id);
+                setOpen(false);
+              }}
+              className="rounded-md border border-black/10 bg-white px-3 py-2 text-sm text-red-600 hover:bg-black/[0.03]"
+            >
+              Delete
+            </button>
+          </div>
         </div>
       </DialogContent>
     </Dialog>
   );
-}
+};

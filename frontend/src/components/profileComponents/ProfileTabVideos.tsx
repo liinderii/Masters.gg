@@ -108,85 +108,103 @@ export const ProfileVideos = () => {
     return hay.includes(query.toLowerCase());
   });
 
+  const pageBg = "bg-gray-100";
+  const cardBase = "bg-white border border-black/10 shadow-none rounded-xl";
+  const sectionInner = "rounded-xl border border-black/10 bg-black/[0.02] p-5";
+  const inputStyle =
+    "bg-white text-black border-black/10 placeholder:text-black/40";
+
   return (
-    <div className="space-y-6">
-      <Card className="w-full mx-auto max-w-[1600px] overflow-hidden gap-0 border shadow-none">
-        <CardHeader>
-          <CardTitle>Videos</CardTitle>
-        </CardHeader>
+    <section className={`w-full ${pageBg}`}>
+      <div className="mx-auto max-w-[1600px] px-4 py-10 space-y-6">
+        <Card className={cardBase}>
+          <CardHeader>
+            <CardTitle>Videos</CardTitle>
+          </CardHeader>
 
-        <CardContent className="flex flex-col gap-4">
-          <Input
-            className="p-2 rounded-md"
-            placeholder="Search videos..."
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-          />
+          <CardContent>
+            <div className={sectionInner}>
+              <div className="flex flex-col gap-4">
+                <Input
+                  className={`p-2 rounded-md ${inputStyle}`}
+                  placeholder="Search videos..."
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                />
 
-          <div className="flex gap-4 flex-wrap">
-            <button className="px-3 py-2 bg-emerald-500 text-white rounded-md border border-white/20">
-              Your videos ({videos.length})
-            </button>
+                <div className="flex gap-4 flex-wrap">
+                  <button className="px-3 py-2 bg-emerald-500 text-white rounded-md border border-white/20">
+                    Your videos ({videos.length})
+                  </button>
 
-            <button className="px-3 py-2 bg-emerald-500 text-white rounded-md border border-white/20">
-              Tagged videos (0)
-            </button>
+                  <button className="px-3 py-2 bg-emerald-500 text-white rounded-md border border-white/20">
+                    Tagged videos (0)
+                  </button>
 
-            <button className="px-3 py-2 bg-emerald-500 text-white rounded-md border border-white/20">
-              Live streams (0)
-            </button>
+                  <button className="px-3 py-2 bg-emerald-500 text-white rounded-md border border-white/20">
+                    Live streams (0)
+                  </button>
 
-            <button
-              type="button"
-              className="px-3 py-2 bg-emerald-500 text-white rounded-md hover:opacity-90 disabled:opacity-60"
-              onClick={handlePickVideo}
-              disabled={isUploading}
-            >
-              {isUploading ? "Uploading..." : "Add video / Go live"}
-            </button>
+                  <button
+                    type="button"
+                    className="px-3 py-2 bg-emerald-500 text-white rounded-md hover:opacity-90 disabled:opacity-60"
+                    onClick={handlePickVideo}
+                    disabled={isUploading}
+                  >
+                    {isUploading ? "Uploading..." : "Add video / Go live"}
+                  </button>
 
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="video/*"
-              className="hidden"
-              onChange={(e) => {
-                const f = e.target.files?.[0];
-                if (f) handleUpload(f);
-                e.currentTarget.value = "";
-              }}
-            />
-          </div>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="video/*"
+                    className="hidden"
+                    onChange={(e) => {
+                      const f = e.target.files?.[0];
+                      if (f) handleUpload(f);
+                      e.currentTarget.value = "";
+                    }}
+                  />
+                </div>
 
-          {error && <p className="text-sm text-red-500">{error}</p>}
-        </CardContent>
-      </Card>
+                {error && <p className="text-sm text-red-500">{error}</p>}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
-      <Card className="w-full mx-auto max-w-[1600px] overflow-hidden gap-0 border shadow-none">
-        <CardHeader>
-          <CardTitle>Your videos</CardTitle>
-        </CardHeader>
+        <Card className={cardBase}>
+          <CardHeader>
+            <CardTitle>Your videos</CardTitle>
+          </CardHeader>
 
-        <CardContent className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {isLoading && (
-            <p className="text-sm text-gray-400 col-span-full">Loading…</p>
-          )}
+          <CardContent>
+            <div className={sectionInner}>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {isLoading && (
+                  <p className="text-sm text-black/60 col-span-full">
+                    Loading…
+                  </p>
+                )}
 
-          {!isLoading && filtered.length === 0 && !error && (
-            <p className="text-sm text-gray-400 col-span-full">
-              No videos to display.
-            </p>
-          )}
+                {!isLoading && filtered.length === 0 && !error && (
+                  <p className="text-sm text-black/60 col-span-full">
+                    No videos to display.
+                  </p>
+                )}
 
-          {filtered.map((video) => (
-            <VideoActionsDialog
-              key={video._id}
-              video={video}
-              onDelete={deleteVideo}
-            />
-          ))}
-        </CardContent>
-      </Card>
-    </div>
+                {filtered.map((video) => (
+                  <VideoActionsDialog
+                    key={video._id}
+                    video={video}
+                    onDelete={deleteVideo}
+                  />
+                ))}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </section>
   );
 };

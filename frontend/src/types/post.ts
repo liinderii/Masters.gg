@@ -6,7 +6,10 @@ export type PostAttachment = {
 export type Post = {
   _id: string;
   userId: string;
+
+  userDisplayName?: string;
+
   content: string;
-  createdAt: string;
   attachments?: PostAttachment[];
+  createdAt: string;
 };

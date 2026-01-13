@@ -42,9 +42,9 @@ export const ProfileFriends = () => {
 
   const [view, setView] = useState<"friends" | "requests" | "find">("friends");
 
-  // ✅ Same “Edit Profile” feel
-  const cardStyle =
-    "w-full mx-auto max-w-[1600px] overflow-hidden gap-0 shadow-none border border-black/10 bg-white text-black rounded-xl";
+  // 🔁 SAMMA STYLING SOM POSTS / ABOUT
+  const pageBg = "bg-gray-100";
+  const cardBase = "bg-white border border-black/10 shadow-none rounded-xl";
   const sectionInner = "rounded-xl border border-black/10 bg-black/[0.02] p-5";
   const inputStyle =
     "bg-white text-black border-black/10 placeholder:text-black/40";
@@ -175,193 +175,205 @@ export const ProfileFriends = () => {
   };
 
   return (
-    <div>
-      <Card className={cardStyle}>
-        <CardHeader>
-          <CardTitle className="text-black">Friends</CardTitle>
-        </CardHeader>
-
-        <CardContent className="flex flex-col gap-4">
-          <div className={sectionInner}>
-            <div className="space-y-4">
-              <Input
-                className={`p-2 rounded-md ${inputStyle}`}
-                placeholder="Search friends"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-              />
-
-              <div className="flex gap-4 flex-wrap">
-                <button className={buttons} onClick={() => setView("requests")}>
-                  Friend requests ({requests.length})
-                </button>
-                <button className={buttons} onClick={() => setView("find")}>
-                  Find friends
-                </button>
-                <button className={buttons} onClick={() => setView("friends")}>
-                  Friends ({friends.length})
-                </button>
-              </div>
-
-              {error && <p className="text-sm text-red-600">{error}</p>}
-            </div>
-          </div>
-        </CardContent>
-
-        <CardFooter />
-      </Card>
-
-      {/* REQUESTS */}
-      {view === "requests" && (
-        <Card className={`${cardStyle} mt-6`}>
+    // 🌫️ GRÅ BAKGRUND UNDER TABS
+    <section className={`w-full ${pageBg}`}>
+      <div className="mx-auto max-w-[1600px] px-4 py-10 space-y-6">
+        {/* TOP CARD */}
+        <Card className={cardBase}>
           <CardHeader>
-            <CardTitle className="text-black">Friend requests</CardTitle>
+            <CardTitle>Friends</CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className={sectionInner}>
-              <div className="flex flex-col gap-3">
-                {isLoading && <p className="text-sm text-black/60">Loading…</p>}
 
-                {!isLoading && requests.length === 0 && (
-                  <p className="text-sm text-black/60">No requests.</p>
-                )}
-
-                {requests.map((r) => (
-                  <div
-                    key={r._id}
-                    className="flex items-center justify-between border-b border-black/10 pb-2 last:border-b-0"
-                  >
-                    <div>
-                      <p className="text-sm font-medium text-black/80">
-                        {r.fromUser.name}
-                      </p>
-                      <p className="text-xs text-black/60">
-                        {r.fromUser.email}
-                      </p>
-                    </div>
-
-                    <div className="flex gap-2">
-                      <button
-                        className={buttons}
-                        onClick={() => acceptRequest(r._id)}
-                      >
-                        Accept
-                      </button>
-                      <button
-                        className={buttons}
-                        onClick={() => declineRequest(r._id)}
-                      >
-                        Decline
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </CardContent>
-          <CardFooter />
-        </Card>
-      )}
-
-      {/* FIND FRIENDS */}
-      {view === "find" && (
-        <Card className={`${cardStyle} mt-6`}>
-          <CardHeader>
-            <CardTitle className="text-black">Find friends</CardTitle>
-          </CardHeader>
-          <CardContent>
+          <CardContent className="flex flex-col gap-4">
             <div className={sectionInner}>
               <div className="space-y-4">
-                <div className="flex gap-2">
-                  <Input
-                    className={inputStyle}
-                    placeholder="Search by name or email…"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    onKeyDown={(e) => e.key === "Enter" && searchUsers()}
-                  />
-                  <button className={buttons} onClick={searchUsers}>
-                    {isSearching ? "Searching..." : "Search"}
+                <Input
+                  className={`p-2 rounded-md ${inputStyle}`}
+                  placeholder="Search friends"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                />
+
+                <div className="flex gap-4 flex-wrap">
+                  <button
+                    className={buttons}
+                    onClick={() => setView("requests")}
+                  >
+                    Friend requests ({requests.length})
+                  </button>
+                  <button className={buttons} onClick={() => setView("find")}>
+                    Find friends
+                  </button>
+                  <button
+                    className={buttons}
+                    onClick={() => setView("friends")}
+                  >
+                    Friends ({friends.length})
                   </button>
                 </div>
 
-                {searchResults.length === 0 && !isSearching && (
-                  <p className="text-sm text-black/60">No results.</p>
-                )}
+                {error && <p className="text-sm text-red-600">{error}</p>}
+              </div>
+            </div>
+          </CardContent>
 
-                <div className="space-y-2">
-                  {searchResults.map((u) => (
+          <CardFooter />
+        </Card>
+
+        {/* REQUESTS */}
+        {view === "requests" && (
+          <Card className={cardBase}>
+            <CardHeader>
+              <CardTitle>Friend requests</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className={sectionInner}>
+                <div className="flex flex-col gap-3">
+                  {isLoading && (
+                    <p className="text-sm text-black/60">Loading…</p>
+                  )}
+
+                  {!isLoading && requests.length === 0 && (
+                    <p className="text-sm text-black/60">No requests.</p>
+                  )}
+
+                  {requests.map((r) => (
                     <div
-                      key={u._id}
+                      key={r._id}
                       className="flex items-center justify-between border-b border-black/10 pb-2 last:border-b-0"
                     >
                       <div>
                         <p className="text-sm font-medium text-black/80">
-                          {u.name}
+                          {r.fromUser.name}
                         </p>
-                        <p className="text-xs text-black/60">{u.email}</p>
+                        <p className="text-xs text-black/60">
+                          {r.fromUser.email}
+                        </p>
                       </div>
 
-                      <button
-                        className={buttons}
-                        onClick={() => sendRequest(u._id)}
+                      <div className="flex gap-2">
+                        <button
+                          className={buttons}
+                          onClick={() => acceptRequest(r._id)}
+                        >
+                          Accept
+                        </button>
+                        <button
+                          className={buttons}
+                          onClick={() => declineRequest(r._id)}
+                        >
+                          Decline
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </CardContent>
+            <CardFooter />
+          </Card>
+        )}
+
+        {/* FIND FRIENDS */}
+        {view === "find" && (
+          <Card className={cardBase}>
+            <CardHeader>
+              <CardTitle>Find friends</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className={sectionInner}>
+                <div className="space-y-4">
+                  <div className="flex gap-2">
+                    <Input
+                      className={inputStyle}
+                      placeholder="Search by name or email…"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      onKeyDown={(e) => e.key === "Enter" && searchUsers()}
+                    />
+                    <button className={buttons} onClick={searchUsers}>
+                      {isSearching ? "Searching..." : "Search"}
+                    </button>
+                  </div>
+
+                  {searchResults.length === 0 && !isSearching && (
+                    <p className="text-sm text-black/60">No results.</p>
+                  )}
+
+                  <div className="space-y-2">
+                    {searchResults.map((u) => (
+                      <div
+                        key={u._id}
+                        className="flex items-center justify-between border-b border-black/10 pb-2 last:border-b-0"
                       >
-                        Add
+                        <div>
+                          <p className="text-sm font-medium text-black/80">
+                            {u.name}
+                          </p>
+                          <p className="text-xs text-black/60">{u.email}</p>
+                        </div>
+
+                        <button
+                          className={buttons}
+                          onClick={() => sendRequest(u._id)}
+                        >
+                          Add
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+            <CardFooter />
+          </Card>
+        )}
+
+        {/* FRIENDS LIST */}
+        {view === "friends" && (
+          <Card className={cardBase}>
+            <CardHeader>
+              <CardTitle>Friends ({filteredFriends.length})</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className={sectionInner}>
+                <div className="flex flex-col gap-4">
+                  {isLoading && (
+                    <p className="text-sm text-black/60">Loading…</p>
+                  )}
+
+                  {!isLoading && filteredFriends.length === 0 && (
+                    <p className="text-sm text-black/60">
+                      No friends to display.
+                    </p>
+                  )}
+
+                  {filteredFriends.map((friend) => (
+                    <div
+                      key={friend._id}
+                      className="flex justify-between items-center border-b border-black/10 pb-2 last:border-b-0"
+                    >
+                      <span className="text-black/80">
+                        {friend.name}
+                        {friend.isOnline && (
+                          <span className="text-sm text-emerald-600 ml-2">
+                            ● Online
+                          </span>
+                        )}
+                      </span>
+
+                      <button className="text-sm text-emerald-600 hover:underline">
+                        Message
                       </button>
                     </div>
                   ))}
                 </div>
               </div>
-            </div>
-          </CardContent>
-          <CardFooter />
-        </Card>
-      )}
-
-      {/* FRIENDS LIST */}
-      {view === "friends" && (
-        <Card className={`${cardStyle} mt-6`}>
-          <CardHeader>
-            <CardTitle className="text-black">
-              Friends ({filteredFriends.length})
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className={sectionInner}>
-              <div className="flex flex-col gap-4">
-                {isLoading && <p className="text-sm text-black/60">Loading…</p>}
-
-                {!isLoading && filteredFriends.length === 0 && (
-                  <p className="text-sm text-black/60">
-                    No friends to display.
-                  </p>
-                )}
-
-                {filteredFriends.map((friend) => (
-                  <div
-                    key={friend._id}
-                    className="flex justify-between items-center border-b border-black/10 pb-2 last:border-b-0"
-                  >
-                    <span className="text-black/80">
-                      {friend.name}
-                      {friend.isOnline && (
-                        <span className="text-sm text-emerald-600 ml-2">
-                          ● Online
-                        </span>
-                      )}
-                    </span>
-
-                    <button className="text-sm text-emerald-600 hover:underline">
-                      Message
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </CardContent>
-          <CardFooter />
-        </Card>
-      )}
-    </div>
+            </CardContent>
+            <CardFooter />
+          </Card>
+        )}
+      </div>
+    </section>
   );
 };

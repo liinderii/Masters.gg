@@ -1,3 +1,4 @@
+// frontend/src/components/profile/ProfileTabPosts.tsx
 import { useEffect, useMemo, useRef, useState } from "react";
 import { buttons } from "../../Styles/button";
 import {
@@ -9,12 +10,14 @@ import {
 } from "../ui/card";
 import { Input } from "../ui/input";
 
-import { House } from "lucide-react";
-import { MapPin } from "lucide-react";
-import { Heart } from "lucide-react";
-import { ThumbsUp } from "lucide-react";
-import { MessageCircleMore } from "lucide-react";
-import { Share } from "lucide-react";
+import {
+  House,
+  MapPin,
+  Heart,
+  ThumbsUp,
+  MessageCircleMore,
+  Share,
+} from "lucide-react";
 
 import type { Post, PostAttachment } from "../../types/post";
 import type { Photo } from "../../types/photo";
@@ -66,7 +69,11 @@ function formatDate(value: string) {
 }
 
 function displayNameFromPost(post: Post) {
-  return post.userId ? `User ${post.userId.slice(0, 6)}…` : "Unknown user";
+  // ✅ Visar riktiga namnet om backend skickar userDisplayName
+  return (
+    post.userDisplayName?.trim() ||
+    (post.userId ? `User ${post.userId.slice(0, 6)}…` : "Unknown user")
+  );
 }
 
 type CommentItem = {
@@ -94,11 +101,14 @@ export const ProfilePosts = () => {
   const [newPost, setNewPost] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [isPhotosLoading, setIsPhotosLoading] = useState(true);
+
   const [error, setError] = useState<string | null>(null);
   const [attachments, setAttachments] = useState<PostAttachment[]>([]);
   const [isUploadingMedia, setIsUploadingMedia] = useState(false);
+
   const mediaInputRef = useRef<HTMLInputElement | null>(null);
   const [postUI, setPostUI] = useState<Record<string, PostUIState>>({});
 
@@ -232,7 +242,10 @@ export const ProfilePosts = () => {
       if (!res.ok) throw new Error("Upload failed");
 
       const created = (await res.json()) as Photo | Video;
-      setAttachments((prev) => [{ kind, refId: created._id }, ...prev]);
+      setAttachments((prev) => [
+        { kind, refId: (created as any)._id },
+        ...prev,
+      ]);
     } catch (e) {
       console.error(e);
       setError("Media upload failed");
@@ -398,12 +411,11 @@ export const ProfilePosts = () => {
   };
 
   // ===== Styles för: grå page + vita cards =====
-  const pageBg = "bg-gray-100"; // din grå
-  const cardBase = "bg-white border border-black/10 shadow-none"; // vita rutor
+  const pageBg = "bg-gray-100";
+  const cardBase = "bg-white border border-black/10 shadow-none";
   const subtleBorder = "border border-black/10";
 
   return (
-    // Wrapper som faktiskt täcker hela ytan under tabsen
     <section className={`w-full ${pageBg}`}>
       <div className="mx-auto max-w-[1600px] px-4 py-10">
         <div className="flex gap-10 items-start">

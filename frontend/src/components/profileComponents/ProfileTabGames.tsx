@@ -47,15 +47,12 @@ export const ProfileGames = () => {
   const [games, setGames] = useState<UserGame[]>([]);
   const [communities, setCommunities] = useState<UserCommunity[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-
   const [search, setSearch] = useState("");
   const [results, setResults] = useState<RawgGame[]>([]);
   const [isSearching, setIsSearching] = useState(false);
-
   const [communitySearch, setCommunitySearch] = useState("");
   const [communityResults, setCommunityResults] = useState<RawgGame[]>([]);
   const [isCommunitySearching, setIsCommunitySearching] = useState(false);
-
   const [error, setError] = useState<string | null>(null);
 
   async function fetchProfileData() {
@@ -232,213 +229,227 @@ export const ProfileGames = () => {
     [communityResults]
   );
 
+  const pageBg = "bg-gray-100";
+  const cardBase = "bg-white border border-black/10 shadow-none rounded-xl";
+  const sectionInner = "rounded-xl border border-black/10 bg-black/[0.02] p-5";
+  const inputStyle =
+    "bg-white text-black border-black/10 placeholder:text-black/40";
+
   return (
-    <div className="space-y-10 bg-white text-black p-6 rounded-xl max-w-[1600px] mx-auto">
-      {error && <p className="text-sm text-red-600">{error}</p>}
+    <section className={`w-full ${pageBg}`}>
+      <div className="mx-auto max-w-[1600px] px-4 py-10 space-y-10">
+        {error && <p className="text-sm text-red-600">{error}</p>}
 
-      <section className="space-y-4 mt-10">
-        <div className="flex justify-center mb-8">
-          <div className="flex flex-col items-center gap-2">
-            <h2 className="w-56 text-center text-lg font-semibold whitespace-nowrap">
-              Featured Games
-            </h2>
+        <section className="space-y-4">
+          <div className="flex justify-center">
+            <div className="flex flex-col items-center gap-1">
+              <h2 className="w-56 text-center text-lg font-semibold whitespace-nowrap">
+                Featured Games
+              </h2>
 
-            <Dialog>
-              <DialogTrigger asChild>
-                <button className={`${buttons} w-56`}>Add game</button>
-              </DialogTrigger>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <button className={`${buttons} w-56 h-10 mb-10`}>
+                    Add game
+                  </button>
+                </DialogTrigger>
 
-              <DialogContent className="max-w-3xl bg-white text-black">
-                <DialogHeader>
-                  <DialogTitle>Search games (RAWG)</DialogTitle>
-                </DialogHeader>
+                <DialogContent className="max-w-3xl bg-white text-black">
+                  <DialogHeader>
+                    <DialogTitle>Search games (RAWG)</DialogTitle>
+                  </DialogHeader>
 
-                <div className="flex gap-2">
-                  <Input
-                    placeholder="Search e.g. Valorant…"
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    onKeyDown={(e) => e.key === "Enter" && doSearch(search)}
-                  />
-                  <Button type="button" onClick={() => doSearch(search)}>
-                    {isSearching ? "Searching..." : "Search"}
-                  </Button>
-                </div>
+                  <div className="flex gap-2">
+                    <Input
+                      className={inputStyle}
+                      placeholder="Search e.g. Valorant…"
+                      value={search}
+                      onChange={(e) => setSearch(e.target.value)}
+                      onKeyDown={(e) => e.key === "Enter" && doSearch(search)}
+                    />
+                    <Button type="button" onClick={() => doSearch(search)}>
+                      {isSearching ? "Searching..." : "Search"}
+                    </Button>
+                  </div>
 
-                <div className="mt-4 grid grid-cols-2 md:grid-cols-3 gap-3">
-                  {filteredResults.map((g) => (
-                    <button
-                      key={g.id}
-                      type="button"
-                      onClick={() => addGame(g)}
-                      className="rounded-xl border border-gray-200 overflow-hidden text-left hover:bg-gray-50 transition"
-                    >
-                      <div className="h-28 w-full bg-gray-100 overflow-hidden">
-                        {g.background_image && (
-                          <img
-                            src={g.background_image}
-                            alt={g.name}
-                            className="h-full w-full object-cover"
-                          />
-                        )}
-                      </div>
-                      <div className="p-3">
-                        <p className="text-sm font-medium">{g.name}</p>
-                        <p className="text-xs text-gray-500 mt-1">
-                          Click to add
-                        </p>
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              </DialogContent>
-            </Dialog>
+                  <div className="mt-4 grid grid-cols-2 md:grid-cols-3 gap-3">
+                    {filteredResults.map((g) => (
+                      <button
+                        key={g.id}
+                        type="button"
+                        onClick={() => addGame(g)}
+                        className="rounded-xl border border-black/10 overflow-hidden text-left hover:bg-black/[0.03] transition"
+                      >
+                        <div className="h-28 w-full bg-black/[0.02] overflow-hidden">
+                          {g.background_image && (
+                            <img
+                              src={g.background_image}
+                              alt={g.name}
+                              className="h-full w-full object-cover"
+                            />
+                          )}
+                        </div>
+                        <div className="p-3">
+                          <p className="text-sm font-medium">{g.name}</p>
+                          <p className="text-xs text-black/60 mt-1">
+                            Click to add
+                          </p>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </div>
           </div>
-        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {games.map((game) => (
-            <Card
-              key={game._id}
-              className="bg-white text-black w-full mx-auto max-w-[1600px] overflow-hidden gap-0 border border-gray-200 shadow-none"
-            >
-              <CardHeader className="flex flex-row items-center justify-between gap-3">
-                <CardTitle className="text-base">{game.name}</CardTitle>
-                <button
-                  type="button"
-                  className="text-xs text-red-600 hover:underline"
-                  onClick={() => deleteGame(game._id)}
-                >
-                  Remove
-                </button>
-              </CardHeader>
-
-              <CardContent>
-                {game.coverUrl ? (
-                  <img
-                    src={game.coverUrl}
-                    alt={game.name}
-                    className="w-full h-44 object-cover rounded border border-gray-200"
-                  />
-                ) : (
-                  <p className="text-sm text-gray-500">No image</p>
-                )}
-              </CardContent>
-
-              <CardFooter />
-            </Card>
-          ))}
-
-          {!isLoading && games.length === 0 && (
-            <p className="text-sm text-gray-500">No games added yet.</p>
-          )}
-        </div>
-      </section>
-
-      {/* FEATURED COMMUNITIES */}
-      <section className="space-y-4">
-        <div className="flex justify-center mb-8">
-          <div className="flex flex-col items-center gap-2">
-            <h2 className="w-56 text-center text-lg font-semibold whitespace-nowrap">
-              Featured Communeties
-            </h2>
-
-            <Dialog>
-              <DialogTrigger asChild>
-                <button className={`${buttons} w-56`}>Add community</button>
-              </DialogTrigger>
-
-              <DialogContent className="max-w-3xl bg-white text-black">
-                <DialogHeader>
-                  <DialogTitle>Pick a game for your community</DialogTitle>
-                </DialogHeader>
-
-                <div className="flex gap-2">
-                  <Input
-                    placeholder="Search games for community…"
-                    value={communitySearch}
-                    onChange={(e) => setCommunitySearch(e.target.value)}
-                    onKeyDown={(e) =>
-                      e.key === "Enter" && doCommunitySearch(communitySearch)
-                    }
-                  />
-                  <Button
+          {/* Lista som vita cards på grå sida */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {games.map((game) => (
+              <Card key={game._id} className={cardBase}>
+                <CardHeader className="flex flex-row items-center justify-between gap-3">
+                  <CardTitle className="text-base">{game.name}</CardTitle>
+                  <button
                     type="button"
-                    onClick={() => doCommunitySearch(communitySearch)}
+                    className="text-xs text-red-600 hover:underline"
+                    onClick={() => deleteGame(game._id)}
                   >
-                    {isCommunitySearching ? "Searching..." : "Search"}
-                  </Button>
-                </div>
+                    Remove
+                  </button>
+                </CardHeader>
 
-                <div className="mt-4 grid grid-cols-2 md:grid-cols-3 gap-3">
-                  {filteredCommunityResults.map((g) => (
-                    <button
-                      key={g.id}
-                      type="button"
-                      onClick={() => addCommunityFromGame(g)}
-                      className="rounded-xl border border-gray-200 overflow-hidden text-left hover:bg-gray-50 transition"
-                    >
-                      <div className="h-28 w-full bg-gray-100 overflow-hidden">
-                        {g.background_image && (
-                          <img
-                            src={g.background_image}
-                            alt={g.name}
-                            className="h-full w-full object-cover"
-                          />
-                        )}
-                      </div>
-                      <div className="p-3">
-                        <p className="text-sm font-medium">{g.name}</p>
-                        <p className="text-xs text-gray-500 mt-1">
-                          Click to create community
-                        </p>
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              </DialogContent>
-            </Dialog>
+                <CardContent>
+                  <div className={sectionInner}>
+                    {game.coverUrl ? (
+                      <img
+                        src={game.coverUrl}
+                        alt={game.name}
+                        className="w-full h-44 object-cover rounded border border-black/10"
+                      />
+                    ) : (
+                      <p className="text-sm text-black/60">No image</p>
+                    )}
+                  </div>
+                </CardContent>
+
+                <CardFooter />
+              </Card>
+            ))}
+
+            {!isLoading && games.length === 0 && (
+              <p className="text-sm text-black/60">No games added yet.</p>
+            )}
           </div>
-        </div>
+        </section>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {communities.map((community) => (
-            <Card
-              key={community._id}
-              className="bg-white text-black w-full mx-auto max-w-[1600px] overflow-hidden gap-0 border border-gray-200 shadow-none"
-            >
-              <CardHeader className="flex flex-row items-center justify-between gap-3">
-                <CardTitle className="text-base">{community.name}</CardTitle>
-                <button
-                  type="button"
-                  className="text-xs text-red-600 hover:underline"
-                  onClick={() => deleteCommunity(community._id)}
-                >
-                  Remove
-                </button>
-              </CardHeader>
+        {/* FEATURED COMMUNITIES */}
+        <section className="space-y-4">
+          {/* Rubrik + knapp närmare varandra */}
+          <div className="flex justify-center">
+            <div className="flex flex-col items-center gap-1">
+              <h2 className="w-56 text-center text-lg font-semibold whitespace-nowrap">
+                Featured Communeties
+              </h2>
 
-              <CardContent>
-                {community.coverUrl ? (
-                  <img
-                    src={community.coverUrl}
-                    alt={community.name}
-                    className="w-full h-44 object-cover rounded border border-gray-200"
-                  />
-                ) : (
-                  <p className="text-sm text-gray-500">No image</p>
-                )}
-              </CardContent>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <button className={`${buttons} w-56 h-10 mb-10`}>
+                    Add community
+                  </button>
+                </DialogTrigger>
 
-              <CardFooter />
-            </Card>
-          ))}
+                <DialogContent className="max-w-3xl bg-white text-black">
+                  <DialogHeader>
+                    <DialogTitle>Pick a game for your community</DialogTitle>
+                  </DialogHeader>
 
-          {communities.length === 0 && (
-            <p className="text-sm text-gray-500">No communities added yet.</p>
-          )}
-        </div>
-      </section>
-    </div>
+                  <div className="flex gap-2">
+                    <Input
+                      className={inputStyle}
+                      placeholder="Search games for community…"
+                      value={communitySearch}
+                      onChange={(e) => setCommunitySearch(e.target.value)}
+                      onKeyDown={(e) =>
+                        e.key === "Enter" && doCommunitySearch(communitySearch)
+                      }
+                    />
+                    <Button
+                      type="button"
+                      onClick={() => doCommunitySearch(communitySearch)}
+                    >
+                      {isCommunitySearching ? "Searching..." : "Search"}
+                    </Button>
+                  </div>
+
+                  <div className="mt-4 grid grid-cols-2 md:grid-cols-3 gap-3">
+                    {filteredCommunityResults.map((g) => (
+                      <button
+                        key={g.id}
+                        type="button"
+                        onClick={() => addCommunityFromGame(g)}
+                        className="rounded-xl border border-black/10 overflow-hidden text-left hover:bg-black/[0.03] transition"
+                      >
+                        <div className="h-28 w-full bg-black/[0.02] overflow-hidden">
+                          {g.background_image && (
+                            <img
+                              src={g.background_image}
+                              alt={g.name}
+                              className="h-full w-full object-cover"
+                            />
+                          )}
+                        </div>
+                        <div className="p-3">
+                          <p className="text-sm font-medium">{g.name}</p>
+                          <p className="text-xs text-black/60 mt-1">
+                            Click to create community
+                          </p>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {communities.map((community) => (
+              <Card key={community._id} className={cardBase}>
+                <CardHeader className="flex flex-row items-center justify-between gap-3">
+                  <CardTitle className="text-base">{community.name}</CardTitle>
+                  <button
+                    type="button"
+                    className="text-xs text-red-600 hover:underline"
+                    onClick={() => deleteCommunity(community._id)}
+                  >
+                    Remove
+                  </button>
+                </CardHeader>
+
+                <CardContent>
+                  <div className={sectionInner}>
+                    {community.coverUrl ? (
+                      <img
+                        src={community.coverUrl}
+                        alt={community.name}
+                        className="w-full h-44 object-cover rounded border border-black/10"
+                      />
+                    ) : (
+                      <p className="text-sm text-black/60">No image</p>
+                    )}
+                  </div>
+                </CardContent>
+
+                <CardFooter />
+              </Card>
+            ))}
+
+            {!isLoading && communities.length === 0 && (
+              <p className="text-sm text-black/60">No communities added yet.</p>
+            )}
+          </div>
+        </section>
+      </div>
+    </section>
   );
 };
