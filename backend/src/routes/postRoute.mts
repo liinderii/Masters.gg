@@ -32,6 +32,8 @@ postRouter.post("/", auth, async (req, res) => {
     const userId = (req as any).userId as string;
     if (!userId) return res.status(401).end();
 
+    const userDisplayName = String((req as any).username ?? "").trim();
+
     const content = String(req.body?.content ?? "").trim();
     const attachments = Array.isArray(req.body?.attachments)
       ? req.body.attachments
@@ -54,6 +56,7 @@ postRouter.post("/", auth, async (req, res) => {
 
     const created = await Post.create({
       userId,
+      userDisplayName,
       content,
       attachments,
     });
@@ -75,7 +78,7 @@ postRouter.delete("/:postId", auth, async (req, res) => {
     const post = await Post.findById(postId);
     if (!post) return res.status(404).json({ message: "Not found" });
 
-    if (post.userId !== userId) {
+    if ((post as any).userId !== userId) {
       return res.status(403).json({ message: "Forbidden" });
     }
 

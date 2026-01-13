@@ -12,6 +12,8 @@ const postSchema = new Schema(
   {
     userId: { type: String, required: true },
 
+    userDisplayName: { type: String, default: "" },
+
     content: { type: String, default: "" },
 
     attachments: { type: [attachmentSchema], default: [] },
