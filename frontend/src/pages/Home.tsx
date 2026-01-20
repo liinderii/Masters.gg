@@ -16,43 +16,44 @@ export function HomePage() {
       <HeroSection />
 
       <SidebarProvider>
-        <div
-          className="flex w-full items-start bg-zinc-900 text-white
-"
-        >
-          <aside className="w-80 shrink-0 sticky top-0 h-dvh">
+        <div className="flex w-full items-start bg-zinc-900 text-white">
+          {/* LEFT SIDEBAR: hide earlier (shows only on xl+) */}
+          <aside className="hidden xl:block w-80 shrink-0 sticky top-0 h-dvh">
             <div className="h-full overflow-y-auto p-10">
               <LeftSidebar />
             </div>
           </aside>
 
-          <main className="min-w-0 flex-1 p-6 flex justify-center">
+          {/* FEED: always visible */}
+          <main className="min-w-0 flex-1 flex justify-center p-4 md:p-6">
             <div className="w-full max-w-5xl">
               <Input
                 placeholder="Whats on your mind?"
                 className="mb-6 mt-12 w-full"
               />
 
-              <section className="space-y-6 p-6">
+              <section className="space-y-6 p-4 md:p-6">
                 <MainCarousel />
               </section>
-              <section className="space-y-8 p-6">
+
+              <section className="space-y-8 p-4 md:p-6">
                 <PostGrid />
               </section>
 
-              <section className="flex flex-col gap-12 p-6">
+              <section className="flex flex-col gap-12 p-4 md:p-6">
                 <GameCategoriesCarousel />
                 <TopTitlesCarousel />
                 <PlatformsCarousel />
               </section>
 
-              <section className="space-y-8 p-6">
+              <section className="space-y-8 p-4 md:p-6">
                 <Lfg />
               </section>
             </div>
           </main>
 
-          <aside className="w-80 shrink-0 sticky top-0 h-dvh">
+          {/* RIGHT SIDEBAR: shows on lg+ */}
+          <aside className="hidden lg:block w-80 shrink-0 sticky top-0 h-dvh">
             <div className="h-full overflow-y-auto p-10">
               <RightSidebar />
             </div>

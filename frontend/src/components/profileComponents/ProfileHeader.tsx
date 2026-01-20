@@ -215,7 +215,6 @@ export const ProfileHeader = () => {
         coverPhotoId: saved.coverPhotoId ? saved.coverPhotoId : null,
       });
 
-      // Viktigt: berätta för ProfilePosts att profilen uppdaterats
       window.dispatchEvent(
         new CustomEvent("profile:updated", { detail: saved })
       );
@@ -245,20 +244,27 @@ export const ProfileHeader = () => {
         <img
           src={coverSrc}
           alt="Profile header"
-          className="block h-100 w-full object-cover rounded-lg"
+          className="block w-full object-cover rounded-lg h-56 md:h-72 lg:h-100"
         />
       </CardHeader>
 
       <CardContent className="relative p-0">
-        <div className="flex w-full items-center justify-between">
-          <div className="flex items-center gap-4">
+        {/* MOBILE/TABLET: kolumn + centrerat | DESKTOP (lg+): exakt som innan */}
+        <div className="flex w-full flex-col items-center text-center lg:flex-row lg:items-center lg:justify-between lg:text-left">
+          {/* LEFT BLOCK */}
+          <div className="flex flex-col items-center gap-4 lg:flex-row lg:items-center lg:gap-4 lg:justify-self-start">
             <img
               src={avatarSrc}
               alt="Profile avatar"
-              className="-mt-16 h-62 w-62 rounded-full border-4 border-white object-cover"
+              className="
+                rounded-full border-4 border-white object-cover
+                -mt-12 md:-mt-14 lg:-mt-16
+                h-32 w-32 md:h-36 md:w-36
+                lg:h-62 lg:w-62
+              "
             />
 
-            <div className="mt-[-64px]">
+            <div className="mt-2 lg:mt-[-64px]">
               <h1 className="text-xl font-semibold">Marcus Linder</h1>
               <p className="text-sm text-gray-500">
                 This is the profile page content.
@@ -266,11 +272,12 @@ export const ProfileHeader = () => {
             </div>
           </div>
 
-          <div className="mt-20 flex gap-2">
+          {/* ACTIONS */}
+          <div className="mt-4 w-full px-4 flex flex-col gap-2 sm:w-auto sm:flex-row sm:justify-center sm:px-0 lg:mt-20 lg:flex-row lg:justify-end">
             {/* Add Story */}
             <Dialog>
               <DialogTrigger asChild>
-                <button className="rounded px-8 w-50 h-12 text-sm font-bold text-white bg-violet-400 hover:bg-violet-500 font-semibold ">
+                <button className="rounded h-12 text-sm font-bold text-white bg-violet-400 hover:bg-violet-500 font-semibold w-full sm:w-auto px-6 lg:px-8 lg:w-50">
                   Add Story
                 </button>
               </DialogTrigger>
@@ -323,12 +330,13 @@ export const ProfileHeader = () => {
             {/* Edit Profile */}
             <Dialog onOpenChange={(v) => v && startEdit()}>
               <DialogTrigger asChild>
-                <button className="rounded px-8 w-50 h-12 text-sm font-bold text-white bg-violet-400 hover:bg-violet-500 font-semibold ">
+                <button className="rounded h-12 text-sm font-bold text-white bg-violet-400 hover:bg-violet-500 font-semibold w-full sm:w-auto px-6 lg:px-8 lg:w-50">
                   Edit Profile
                 </button>
               </DialogTrigger>
 
               <DialogContent className={`${modalBase} max-h-[90vh]`}>
+                {/* --- resten av din modal är oförändrad --- */}
                 <DialogHead>
                   <DialogTitle className="text-black">Edit Profile</DialogTitle>
                   <DialogDescription className="text-black/60">

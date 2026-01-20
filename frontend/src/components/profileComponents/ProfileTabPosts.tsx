@@ -69,7 +69,6 @@ function formatDate(value: string) {
 }
 
 function displayNameFromPost(post: Post) {
-  // ✅ Visar riktiga namnet om backend skickar userDisplayName
   return (
     post.userDisplayName?.trim() ||
     (post.userId ? `User ${post.userId.slice(0, 6)}…` : "Unknown user")
@@ -410,7 +409,6 @@ export const ProfilePosts = () => {
     return <Heart className={cls} />;
   };
 
-  // ===== Styles för: grå page + vita cards =====
   const pageBg = "bg-gray-100";
   const cardBase = "bg-white border border-black/10 shadow-none";
   const subtleBorder = "border border-black/10";
@@ -418,8 +416,10 @@ export const ProfilePosts = () => {
   return (
     <section className={`w-full ${pageBg}`}>
       <div className="mx-auto max-w-[1600px] px-4 py-10">
-        <div className="flex gap-10 items-start">
-          <aside className="w-[520px] shrink-0 sticky top-6 self-start space-y-4">
+        {/* ✅ FIX: stack on mobile, row on md+ */}
+        <div className="flex flex-col md:flex-row gap-6 md:gap-10 items-start">
+          {/* ✅ FIX: sidebar full width on mobile, sticky only on md+ */}
+          <aside className="w-full md:w-[520px] shrink-0 md:sticky md:top-6 self-start space-y-4">
             <Card className={cardBase}>
               <CardHeader>
                 <CardTitle>Details</CardTitle>
@@ -485,7 +485,8 @@ export const ProfilePosts = () => {
             </Card>
           </aside>
 
-          <main className="flex-1 space-y-4">
+          {/* ✅ FIX: main full width on mobile */}
+          <main className="w-full md:flex-1 space-y-4">
             <Card className={cardBase}>
               <CardHeader>
                 <CardTitle>Create Post</CardTitle>
