@@ -30,8 +30,6 @@ export const RightSidebar = () => {
         />
       </div>
 
-      {/* 2) Friends  */}
-
       <SidebarGroup className="bg-neutral-800 p-8 mt-6 rounded-xl bg-white/5 border border-white/10 ring-1 ring-emerald-400/20 hover:ring-emerald-400/35 transition">
         <SidebarGroupLabel className="mb-3 pl-3  text-xl font-semibold text-white border-l-2 border-emerald-400">
           Friends
@@ -49,7 +47,6 @@ export const RightSidebar = () => {
         </SidebarGroupContent>
       </SidebarGroup>
 
-      {/* 3) Connect with */}
       <SidebarGroup className="rounded-xl bg-white/5 border border-white/10 ring-1 ring-emerald-400/20 hover:ring-emerald-400/35 transitionbg-neutral-800 p-8 mt-6">
         <SidebarGroupLabel className="mb-3 pl-3 text-xl font-semibold text-white border-l-2 border-emerald-400">
           Connect with

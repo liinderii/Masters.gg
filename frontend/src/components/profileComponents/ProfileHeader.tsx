@@ -28,8 +28,8 @@ type HeaderState = {
 };
 
 export type ProfileMe = {
-  avatarPhotoId: string; // Photo._id eller ""
-  coverPhotoId: string; // Photo._id eller ""
+  avatarPhotoId: string;
+  coverPhotoId: string;
   bio: string;
   intro: {
     livesIn: string;
@@ -101,7 +101,6 @@ export const ProfileHeader = () => {
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [loadingPhotos, setLoadingPhotos] = useState(true);
 
-  // Draft i modalen
   const [draftBio, setDraftBio] = useState("");
   const [draftLivesIn, setDraftLivesIn] = useState("");
   const [draftFrom, setDraftFrom] = useState("");
@@ -113,7 +112,6 @@ export const ProfileHeader = () => {
     null
   );
 
-  // 1) Ladda sparad profil från backend
   useEffect(() => {
     (async () => {
       try {
@@ -135,7 +133,6 @@ export const ProfileHeader = () => {
     })();
   }, []);
 
-  // 2) Ladda photos
   useEffect(() => {
     (async () => {
       try {
@@ -179,7 +176,6 @@ export const ProfileHeader = () => {
   }
 
   async function saveEdit() {
-    // Uppdatera UI direkt
     setHeader((prev) => ({
       ...prev,
       bio: draftBio,
@@ -249,9 +245,7 @@ export const ProfileHeader = () => {
       </CardHeader>
 
       <CardContent className="relative p-0">
-        {/* MOBILE/TABLET: kolumn + centrerat | DESKTOP (lg+): exakt som innan */}
         <div className="flex w-full flex-col items-center text-center lg:flex-row lg:items-center lg:justify-between lg:text-left">
-          {/* LEFT BLOCK */}
           <div className="flex flex-col items-center gap-4 lg:flex-row lg:items-center lg:gap-4 lg:justify-self-start">
             <img
               src={avatarSrc}
@@ -272,9 +266,7 @@ export const ProfileHeader = () => {
             </div>
           </div>
 
-          {/* ACTIONS */}
           <div className="mt-4 w-full px-4 flex flex-col gap-2 sm:w-auto sm:flex-row sm:justify-center sm:px-0 lg:mt-20 lg:flex-row lg:justify-end">
-            {/* Add Story */}
             <Dialog>
               <DialogTrigger asChild>
                 <button className="rounded h-12 text-sm font-bold text-white bg-violet-400 hover:bg-violet-500 font-semibold w-full sm:w-auto px-6 lg:px-8 lg:w-50">
@@ -327,7 +319,6 @@ export const ProfileHeader = () => {
               </DialogContent>
             </Dialog>
 
-            {/* Edit Profile */}
             <Dialog onOpenChange={(v) => v && startEdit()}>
               <DialogTrigger asChild>
                 <button className="rounded h-12 text-sm font-bold text-white bg-violet-400 hover:bg-violet-500 font-semibold w-full sm:w-auto px-6 lg:px-8 lg:w-50">
@@ -336,7 +327,6 @@ export const ProfileHeader = () => {
               </DialogTrigger>
 
               <DialogContent className={`${modalBase} max-h-[90vh]`}>
-                {/* --- resten av din modal är oförändrad --- */}
                 <DialogHead>
                   <DialogTitle className="text-black">Edit Profile</DialogTitle>
                   <DialogDescription className="text-black/60">
@@ -345,7 +335,6 @@ export const ProfileHeader = () => {
                 </DialogHead>
 
                 <div className="mt-6 max-h-[65vh] overflow-y-auto pr-3 space-y-12">
-                  {/* COVER SECTION */}
                   <section className={sectionBase}>
                     <div className="flex items-center justify-between">
                       <h3 className={sectionHeaderTitle}>Cover photo</h3>
@@ -417,7 +406,6 @@ export const ProfileHeader = () => {
                     </p>
                   </section>
 
-                  {/* PROFILE PICTURE SECTION */}
                   <section className={sectionBase}>
                     <div className="flex items-center justify-between">
                       <h3 className={sectionHeaderTitle}>Profile picture</h3>
@@ -492,7 +480,6 @@ export const ProfileHeader = () => {
                     </p>
                   </section>
 
-                  {/* BIO */}
                   <section className={sectionBase}>
                     <div className="flex items-center justify-between">
                       <h3 className={sectionHeaderTitle}>Bio</h3>
@@ -511,7 +498,6 @@ export const ProfileHeader = () => {
                     />
                   </section>
 
-                  {/* INTRO */}
                   <section className={sectionBase}>
                     <div className="flex items-center justify-between">
                       <h3 className={sectionHeaderTitle}>Intro</h3>

@@ -18,7 +18,7 @@ export const Lfg = () => {
         </h2>
         <div className="flex gap-4 mt-4">
           <button type="button" className={buttons}>
-            Looking for more
+            Looking for group
           </button>
           <button type="button" className={buttons}>
             Looking for more

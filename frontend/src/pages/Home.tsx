@@ -2,13 +2,13 @@ import { SidebarProvider } from "../components/ui/sidebar";
 import { LeftSidebar } from "../components/LeftSidebar";
 import { RightSidebar } from "../components/RightSidebar";
 import { MainCarousel } from "../components/Carousel";
-import { Input } from "../components/ui/input";
-import { PostGrid } from "../components/PostGrid";
 import { PlatformsCarousel } from "../components/PlatformsCarousel";
 import { TopTitlesCarousel } from "../components/TopTitleCarousel";
 import { GameCategoriesCarousel } from "../components/CategoriesCarousel";
 import { Lfg } from "../components/Lfg";
 import { HeroSection } from "../components/HeroSection";
+
+import { FeedPosts } from "../components/feed/FeedPosts";
 
 export function HomePage() {
   return (
@@ -17,27 +17,20 @@ export function HomePage() {
 
       <SidebarProvider>
         <div className="flex w-full items-start bg-zinc-900 text-white">
-          {/* LEFT SIDEBAR: hide earlier (shows only on xl+) */}
           <aside className="hidden xl:block w-80 shrink-0 sticky top-0 h-dvh">
             <div className="h-full overflow-y-auto p-10">
               <LeftSidebar />
             </div>
           </aside>
 
-          {/* FEED: always visible */}
           <main className="min-w-0 flex-1 flex justify-center p-4 md:p-6">
             <div className="w-full max-w-5xl">
-              <Input
-                placeholder="Whats on your mind?"
-                className="mb-6 mt-12 w-full"
-              />
-
               <section className="space-y-6 p-4 md:p-6">
                 <MainCarousel />
               </section>
 
               <section className="space-y-8 p-4 md:p-6">
-                <PostGrid />
+                <FeedPosts />
               </section>
 
               <section className="flex flex-col gap-12 p-4 md:p-6">
@@ -52,7 +45,6 @@ export function HomePage() {
             </div>
           </main>
 
-          {/* RIGHT SIDEBAR: shows on lg+ */}
           <aside className="hidden lg:block w-80 shrink-0 sticky top-0 h-dvh">
             <div className="h-full overflow-y-auto p-10">
               <RightSidebar />

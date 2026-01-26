@@ -31,7 +31,6 @@ export const ProfileAboutColumns = () => {
   const sidebarPhotos = useMemo(() => photos.slice(0, 6), [photos]);
   const sidebarVideos = useMemo(() => videos.slice(0, 4), [videos]);
 
-  // 🔁 SAMMA STYLING SOM POSTS
   const pageBg = "bg-gray-100";
   const cardBase = "bg-white border border-black/10 shadow-none rounded-xl";
   const sectionInner = "rounded-xl border border-black/10 bg-black/[0.02] p-5";
@@ -96,15 +95,12 @@ export const ProfileAboutColumns = () => {
   const currentBio = data.about[0] ?? "";
 
   return (
-    // 🌫️ GRÅ BAKGRUND UNDER TABS
     <section className={`w-full ${pageBg}`}>
       <div className="mx-auto max-w-[1600px] px-4 py-10 space-y-8">
         {error && <p className="text-sm text-red-600">{error}</p>}
         {isLoading && <p className="text-sm text-black/60">Loading…</p>}
 
-        {/* GRID */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-          {/* Intro / Bio */}
           <Card className={cardBase}>
             <CardHeader>
               <CardTitle>Intro</CardTitle>
@@ -167,7 +163,6 @@ export const ProfileAboutColumns = () => {
             </CardContent>
           </Card>
 
-          {/* Friends */}
           <Card className={cardBase}>
             <CardHeader>
               <CardTitle>Friends</CardTitle>
@@ -193,7 +188,6 @@ export const ProfileAboutColumns = () => {
             </CardContent>
           </Card>
 
-          {/* Photos */}
           <Card className={cardBase}>
             <CardHeader>
               <CardTitle>Photos</CardTitle>
@@ -220,7 +214,6 @@ export const ProfileAboutColumns = () => {
             </CardContent>
           </Card>
 
-          {/* Videos */}
           <Card className={cardBase}>
             <CardHeader>
               <CardTitle>Videos</CardTitle>

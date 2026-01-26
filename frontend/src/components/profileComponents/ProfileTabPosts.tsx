@@ -1,4 +1,3 @@
-// frontend/src/components/profile/ProfileTabPosts.tsx
 import { useEffect, useMemo, useRef, useState } from "react";
 import { buttons } from "../../Styles/button";
 import {
@@ -68,11 +67,26 @@ function formatDate(value: string) {
   }
 }
 
-function displayNameFromPost(post: Post) {
+function displayNameFromPost(post: any) {
   return (
-    post.userDisplayName?.trim() ||
-    (post.userId ? `User ${post.userId.slice(0, 6)}…` : "Unknown user")
+    post?.userDisplayName?.trim?.() ||
+    post?.userUsername?.trim?.() ||
+    post?.username?.trim?.() ||
+    post?.user?.username?.trim?.() ||
+    post?.user?.displayName?.trim?.() ||
+    (post?.userId ? `User ${String(post.userId).slice(0, 6)}…` : "Unknown user")
   );
+}
+
+function textFromPost(post: any) {
+  const t =
+    post?.content ??
+    post?.text ??
+    post?.caption ??
+    post?.title ??
+    post?.message ??
+    "";
+  return typeof t === "string" ? t : "";
 }
 
 type CommentItem = {
@@ -128,8 +142,8 @@ export const ProfilePosts = () => {
         setPostUI((prev) => {
           const next = { ...prev };
           for (const p of data) {
-            if (!next[p._id]) {
-              next[p._id] = {
+            if (!next[(p as any)._id]) {
+              next[(p as any)._id] = {
                 liked: false,
                 likeCount: 0,
                 comments: [],
@@ -280,7 +294,7 @@ export const ProfilePosts = () => {
 
       setPostUI((prev) => ({
         ...prev,
-        [created._id]: {
+        [(created as any)._id]: {
           liked: false,
           likeCount: 0,
           comments: [],
@@ -305,7 +319,7 @@ export const ProfilePosts = () => {
 
       if (!res.ok) throw new Error("Delete failed");
 
-      setPosts((prev) => prev.filter((p) => p._id !== postId));
+      setPosts((prev) => prev.filter((p: any) => p._id !== postId));
       setPostUI((prev) => {
         const next = { ...prev };
         delete next[postId];
@@ -337,10 +351,7 @@ export const ProfilePosts = () => {
     ensurePostUI(postId);
     setPostUI((prev) => {
       const s = prev[postId]!;
-      return {
-        ...prev,
-        [postId]: { ...s, commentDraft: value },
-      };
+      return { ...prev, [postId]: { ...s, commentDraft: value } };
     });
   };
 
@@ -416,9 +427,7 @@ export const ProfilePosts = () => {
   return (
     <section className={`w-full ${pageBg}`}>
       <div className="mx-auto max-w-[1600px] px-4 py-10">
-        {/* ✅ FIX: stack on mobile, row on md+ */}
         <div className="flex flex-col md:flex-row gap-6 md:gap-10 items-start">
-          {/* ✅ FIX: sidebar full width on mobile, sticky only on md+ */}
           <aside className="w-full md:w-[520px] shrink-0 md:sticky md:top-6 self-start space-y-4">
             <Card className={cardBase}>
               <CardHeader>
@@ -485,7 +494,6 @@ export const ProfilePosts = () => {
             </Card>
           </aside>
 
-          {/* ✅ FIX: main full width on mobile */}
           <main className="w-full md:flex-1 space-y-4">
             <Card className={cardBase}>
               <CardHeader>
@@ -584,7 +592,7 @@ export const ProfilePosts = () => {
                 <p className="text-sm text-black/60">No posts yet.</p>
               )}
 
-              {posts.map((post) => {
+              {(posts as any[]).map((post: any) => {
                 const name = displayNameFromPost(post);
                 const ui = postUI[post._id] ?? {
                   liked: false,
@@ -592,6 +600,8 @@ export const ProfilePosts = () => {
                   comments: [],
                   commentDraft: "",
                 };
+
+                const postText = textFromPost(post);
 
                 return (
                   <Card key={post._id} className={cardBase}>
@@ -616,15 +626,15 @@ export const ProfilePosts = () => {
 
                     <CardContent>
                       <div className="flex flex-col items-center text-center">
-                        {post.content && (
+                        {postText.trim() && (
                           <p className="max-w-[70ch] text-lg leading-relaxed">
-                            {post.content}
+                            {postText.trim()}
                           </p>
                         )}
 
                         {post.attachments?.length ? (
                           <div className="mt-4 w-full max-w-3xl space-y-3">
-                            {post.attachments.map((a, i) => {
+                            {post.attachments.map((a: any, i: number) => {
                               const src =
                                 a.kind === "photo"
                                   ? `${API_BASE}/photos/${a.refId}/file`

@@ -303,7 +303,6 @@ export const ProfileGames = () => {
             </div>
           </div>
 
-          {/* Lista som vita cards på grå sida */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {games.map((game) => (
               <Card key={game._id} className={cardBase}>
@@ -342,9 +341,7 @@ export const ProfileGames = () => {
           </div>
         </section>
 
-        {/* FEATURED COMMUNITIES */}
         <section className="space-y-4">
-          {/* Rubrik + knapp närmare varandra */}
           <div className="flex justify-center">
             <div className="flex flex-col items-center gap-1">
               <h2 className="w-56 text-center text-lg font-semibold whitespace-nowrap">

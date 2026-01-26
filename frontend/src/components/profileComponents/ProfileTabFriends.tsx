@@ -42,7 +42,6 @@ export const ProfileFriends = () => {
 
   const [view, setView] = useState<"friends" | "requests" | "find">("friends");
 
-  // 🔁 SAMMA STYLING SOM POSTS / ABOUT
   const pageBg = "bg-gray-100";
   const cardBase = "bg-white border border-black/10 shadow-none rounded-xl";
   const sectionInner = "rounded-xl border border-black/10 bg-black/[0.02] p-5";
@@ -175,10 +174,8 @@ export const ProfileFriends = () => {
   };
 
   return (
-    // 🌫️ GRÅ BAKGRUND UNDER TABS
     <section className={`w-full ${pageBg}`}>
       <div className="mx-auto max-w-[1600px] px-4 py-10 space-y-6">
-        {/* TOP CARD */}
         <Card className={cardBase}>
           <CardHeader>
             <CardTitle>Friends</CardTitle>
@@ -220,7 +217,6 @@ export const ProfileFriends = () => {
           <CardFooter />
         </Card>
 
-        {/* REQUESTS */}
         {view === "requests" && (
           <Card className={cardBase}>
             <CardHeader>
@@ -274,7 +270,6 @@ export const ProfileFriends = () => {
           </Card>
         )}
 
-        {/* FIND FRIENDS */}
         {view === "find" && (
           <Card className={cardBase}>
             <CardHeader>
@@ -329,7 +324,6 @@ export const ProfileFriends = () => {
           </Card>
         )}
 
-        {/* FRIENDS LIST */}
         {view === "friends" && (
           <Card className={cardBase}>
             <CardHeader>
