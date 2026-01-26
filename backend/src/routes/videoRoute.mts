@@ -45,10 +45,11 @@ videoRouter.post("/", uploadVideo.single("file"), async (req, res) => {
 
     const bucket = getBucket();
 
+    // NOTE: Cast to any to avoid TS type issues for stream methods (end/on/pipe)
     const uploadStream = bucket.openUploadStream(file.originalname, {
       contentType: file.mimetype,
       metadata: { userId },
-    });
+    }) as any;
 
     uploadStream.end(file.buffer);
 
@@ -66,10 +67,10 @@ videoRouter.post("/", uploadVideo.single("file"), async (req, res) => {
       return res.status(201).json(created);
     });
 
-    uploadStream.on("error", (err) => {
+    uploadStream.on("error", (err: any) => {
       return res
         .status(500)
-        .json({ message: "Upload failed", error: err.message });
+        .json({ message: "Upload failed", error: err?.message ?? String(err) });
     });
   } catch (error: any) {
     return res
@@ -98,9 +99,11 @@ videoRouter.get("/:videoId/file", async (req, res) => {
 
     res.setHeader("Content-Type", "video/mp4");
 
+    // NOTE: Cast to any to avoid TS type issues for stream methods (on/pipe)
     const downloadStream = bucket.openDownloadStream(
       new ObjectId(video.fileId)
-    );
+    ) as any;
+
     downloadStream.on("error", () => res.status(404).send("Not found"));
     downloadStream.pipe(res);
   } catch {

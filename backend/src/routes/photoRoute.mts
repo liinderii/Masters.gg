@@ -45,10 +45,11 @@ photoRouter.post("/", uploadPhoto.single("file"), async (req, res) => {
     const bucket = getBucket();
     const filename = file.originalname || "upload";
 
+    // NOTE: Cast to any to avoid TS type issues for stream methods (end/on/pipe)
     const uploadStream = bucket.openUploadStream(filename, {
       contentType: file.mimetype,
       metadata: { userId },
-    });
+    }) as any;
 
     uploadStream.end(file.buffer);
 
@@ -64,10 +65,10 @@ photoRouter.post("/", uploadPhoto.single("file"), async (req, res) => {
       return res.status(201).json(created);
     });
 
-    uploadStream.on("error", (err) => {
+    uploadStream.on("error", (err: any) => {
       return res
         .status(500)
-        .json({ message: "Upload failed", error: err.message });
+        .json({ message: "Upload failed", error: err?.message ?? String(err) });
     });
   } catch (error: any) {
     return res
@@ -94,9 +95,11 @@ photoRouter.get("/:photoId/file", async (req, res) => {
       return res.status(500).json({ message: "Invalid fileId stored" });
     }
 
+    // NOTE: Cast to any to avoid TS type issues for stream methods (on/pipe)
     const downloadStream = bucket.openDownloadStream(
       new ObjectId(photo.fileId)
-    );
+    ) as any;
+
     downloadStream.on("error", () => res.status(404).send("Not found"));
     downloadStream.pipe(res);
   } catch (error) {
