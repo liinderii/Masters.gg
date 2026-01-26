@@ -2,6 +2,10 @@ import axios from "axios";
 import { type ChangeEvent, type FormEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+const API_BASE =
+  import.meta.env.VITE_API_BASE_URL?.replace(/\/$/, "") ??
+  "http://localhost:3000";
+
 export const LoginForm = () => {
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
@@ -11,7 +15,7 @@ export const LoginForm = () => {
     e.preventDefault();
 
     const response = await axios.post(
-      "http://localhost:3000/login",
+      `${API_BASE}/login`,
       {
         email: userName,
         password: password,
