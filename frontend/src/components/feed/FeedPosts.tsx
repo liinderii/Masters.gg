@@ -24,7 +24,6 @@ function formatDate(value: string) {
   }
 }
 
-// ✅ Tolerant displayname (klarar flera varianter från backend)
 function displayNameFromPost(post: any) {
   return (
     post?.userDisplayName?.trim?.() ||
@@ -36,7 +35,6 @@ function displayNameFromPost(post: any) {
   );
 }
 
-// ✅ Tolerant text (klarar flera varianter)
 function textFromPost(post: any) {
   const t =
     post?.content ??
@@ -75,8 +73,6 @@ export const FeedPosts = () => {
 
   const [postUI, setPostUI] = useState<Record<string, PostUIState>>({});
 
-  // ✅ Viktigt: HomePage wrapper har text-white.
-  // Tvinga allt i cards till svart text.
   const cardBase = "bg-white border border-black/10 shadow-none text-black";
   const subtleBorder = "border border-black/10";
 

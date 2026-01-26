@@ -24,7 +24,6 @@ export const VideoActionsDialog = ({ video, onDelete }: Props) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        {/* Thumbnail-kort: INGEN text-overlay */}
         <button
           type="button"
           className="relative overflow-hidden rounded-xl border border-black/10 bg-white shadow-none w-full text-left"
@@ -38,14 +37,12 @@ export const VideoActionsDialog = ({ video, onDelete }: Props) => {
             preload="metadata"
           />
 
-          {/* Valfri: subtil hover-overlay utan text */}
           <div className="pointer-events-none absolute inset-0 opacity-0 hover:opacity-100 transition bg-black/5" />
         </button>
       </DialogTrigger>
 
       <DialogContent className="max-w-4xl bg-white text-black">
         <DialogHeader>
-          {/* Om du inte vill ha titel här heller: kan tas bort helt */}
           <DialogTitle className="text-black">
             {video.title?.trim() ? video.title : "Video"}
           </DialogTitle>

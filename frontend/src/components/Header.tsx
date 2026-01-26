@@ -31,10 +31,8 @@ export const Header = () => {
           </button>
         </div>
 
-        {/* Mobile menu */}
         {open && (
           <div className="col-span-3 md:hidden mt-3 border-t border-white/10 pt-4">
-            {/* 🔽 ENDA ÄNDRINGEN HÄR */}
             <div
               className="flex flex-col items-center gap-3 text-center"
               onClick={() => setOpen(false)}
