@@ -10,10 +10,12 @@ export const issueLoginCookie = (res: Response, userDto: UserDto) => {
     expiresIn: "1h",
   });
 
+  const isProd = process.env.NODE_ENV === "production";
+
   res.cookie("login", token, {
     httpOnly: true,
-    secure: false,
-    sameSite: "lax",
+    secure: isProd, // true i production (HTTPS)
+    sameSite: isProd ? "none" : "lax", // none krävs för cross-domain cookies
     maxAge: 60 * 60 * 1000,
     path: "/",
   });

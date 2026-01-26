@@ -21,7 +21,6 @@ const port = process.env.PORT || 3000;
 const dbUrl = process.env.MONGO_URL;
 const clientOrigin = process.env.CLIENT_ORIGIN || "http://localhost:5173";
 if (!dbUrl) throw Error("No MONGO_URL in env file");
-if (!dbUrl) throw Error("No MONGO_URL in env file");
 
 const app = express();
 
