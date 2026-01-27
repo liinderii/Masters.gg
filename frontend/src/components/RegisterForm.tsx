@@ -1,6 +1,5 @@
 import axios from "axios";
-import { useState } from "react";
-import { type ChangeEvent, type FormEvent } from "react";
+import { useState, type ChangeEvent, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 
 const API_BASE =
@@ -35,12 +34,10 @@ export const RegisterForm = () => {
       `${API_BASE}/register`,
       {
         name: userName,
-        email: email,
-        password: password,
+        email,
+        password,
       },
-      {
-        withCredentials: true,
-      }
+      { withCredentials: true }
     );
 
     console.log(response.data);
@@ -48,87 +45,140 @@ export const RegisterForm = () => {
   };
 
   return (
-    <>
+    <div className="relative min-h-screen flex items-center justify-center px-4">
+      {/* Background video */}
+      <video
+        className="absolute inset-0 -z-10 w-full h-full object-cover"
+        src="/Login.mp4"
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="auto"
+      />
+
+      {/* Dark overlay */}
+      <div className="absolute inset-0 bg-black/45" aria-hidden="true" />
+
       <form
         onSubmit={onSubmit}
-        className="mx-auto mt-10 max-w-sm rounded-2xl border border-slate-200 bg-gradient-to-br from-slate-50 to-slate-100 p-6 shadow-md"
+        className="
+          relative z-10 w-full max-w-md md:max-w-lg lg:max-w-xl
+          rounded-2xl border border-white/10
+          bg-white/10 backdrop-blur-md
+          p-6 shadow-xl
+        "
       >
-        {error && <p>{error}</p>}
+        <h2 className="text-3xl font-bold text-center text-violet-400 mb-8">
+          Create account
+        </h2>
 
+        {error && (
+          <p className="mb-4 text-center text-sm text-red-400">{error}</p>
+        )}
+
+        {/* Email */}
         <div>
-          <label htmlFor="email">Email:</label>
+          <label className="block text-sm font-medium text-white/80 mb-1">
+            Email:
+          </label>
           <input
             type="email"
-            id="email"
-            placeholder="Name@example.com"
             value={email}
             onChange={(e: ChangeEvent<HTMLInputElement>) =>
               setEmail(e.target.value)
             }
-            className="block w-full rounded-lg border border-slate-300 bg-white text-slate-900 px-3 py-2
-             focus:outline-none focus:ring-2 focus:ring-sky-400 focus:border-sky-400"
+            placeholder="you@domain.com"
+            className="
+              block w-full rounded-lg
+              border border-white/20
+              bg-white/10 text-white placeholder-white/60
+              px-3 py-2 outline-none
+              focus:ring-2 focus:ring-violet-400 focus:border-violet-400
+            "
           />
         </div>
 
-        <div>
-          <label htmlFor="username">Username:</label>
+        {/* Username */}
+        <div className="mt-4">
+          <label className="block text-sm font-medium text-white/80 mb-1">
+            Username:
+          </label>
           <input
             type="text"
-            id="username"
             value={userName}
             onChange={(e: ChangeEvent<HTMLInputElement>) =>
               setUserName(e.target.value)
             }
-            className="block w-full rounded-lg border border-slate-300 bg-white text-slate-900 px-3 py-2
-             focus:outline-none focus:ring-2 focus:ring-sky-400 focus:border-sky-400"
+            className="
+              block w-full rounded-lg
+              border border-white/20
+              bg-white/10 text-white placeholder-white/60
+              px-3 py-2 outline-none
+              focus:ring-2 focus:ring-violet-400 focus:border-violet-400
+            "
           />
         </div>
 
-        <div>
-          <label htmlFor="password">Password:</label>
+        {/* Password */}
+        <div className="mt-4">
+          <label className="block text-sm font-medium text-white/80 mb-1">
+            Password:
+          </label>
           <input
             type="password"
-            id="password"
             value={password}
             onChange={(e: ChangeEvent<HTMLInputElement>) =>
               setPassword(e.target.value)
             }
-            className="block w-full rounded-lg border border-slate-300 bg-white text-slate-900 px-3 py-2
-             focus:outline-none focus:ring-2 focus:ring-sky-400 focus:border-sky-400"
+            placeholder="••••••••"
+            className="
+              block w-full rounded-lg
+              border border-white/20
+              bg-white/10 text-white placeholder-white/60
+              px-3 py-2 outline-none
+              focus:ring-2 focus:ring-violet-400 focus:border-violet-400
+            "
           />
         </div>
 
-        <div>
-          <label htmlFor="confirm">Confirm Password:</label>
+        {/* Confirm */}
+        <div className="mt-4">
+          <label className="block text-sm font-medium text-white/80 mb-1">
+            Confirm password:
+          </label>
           <input
             type="password"
-            id="confirm"
             value={confirm}
             onChange={(e: ChangeEvent<HTMLInputElement>) =>
               setConfirm(e.target.value)
             }
-            className="block w-full rounded-lg border border-slate-300 bg-white text-slate-900 px-3 py-2
-             focus:outline-none focus:ring-2 focus:ring-sky-400 focus:border-sky-400"
+            placeholder="••••••••"
+            className="
+              block w-full rounded-lg
+              border border-white/20
+              bg-white/10 text-white placeholder-white/60
+              px-3 py-2 outline-none
+              focus:ring-2 focus:ring-violet-400 focus:border-violet-400
+            "
           />
         </div>
 
-        <div>
-          <button
-            className="mt-6 w-full rounded-lg bg-violet-400 hover:bg-violet-500 text-white font-semibold py-2 transition focus:outline-none focus:ring-2 focus:ring-violet-300"
-            type="submit"
-          >
-            Register
-          </button>
+        <button
+          type="submit"
+          className="mt-6 w-full rounded-lg bg-violet-400 hover:bg-violet-500 text-white font-semibold py-2 transition focus:outline-none focus:ring-2 focus:ring-violet-300"
+        >
+          Register
+        </button>
 
-          <button
-            className="mt-6 w-full rounded-lg bg-violet-400 hover:bg-violet-500 text-white font-semibold py-2 transition focus:outline-none focus:ring-2 focus:ring-violet-300"
-            type="button"
-            onClick={() => navigate("/login")}
-          >
-            Already have an account?
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={() => navigate("/login")}
+          className="mt-3 w-full rounded-lg bg-violet-400 hover:bg-violet-500 text-white font-semibold py-2 transition focus:outline-none focus:ring-2 focus:ring-violet-300"
+        >
+          Already have an account?
+        </button>
       </form>
-    </>
+    </div>
   );
 };
